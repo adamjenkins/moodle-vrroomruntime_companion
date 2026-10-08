@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/livekit.js</location>
+    <name>livekit-client</name>
+    <description>LiveKit JavaScript client SDK for voice in companion live rooms, bundled with its dependencies as one ES module (licences of the bundled packages are listed in the file header: Apache-2.0, MIT, BSD-3-Clause, 0BSD).</description>
+    <version>2.22.3</version>
+    <license>Apache</license>
+    <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/livekit/client-sdk-js</repository>
+    <copyrights>
+      <copyright>LiveKit, Inc.</copyright>
+    </copyrights>
+  </library>
+</libraries>
