@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English strings for the MAVR companion service run mode.
+ * English strings for the VR room companion service run mode.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @category   string
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,7 +43,7 @@ $string['maxusers'] = 'Maximum people per room';
 $string['maxusers_desc'] = 'The largest live room teachers can choose for an activity that uses the companion service.';
 $string['notconfigured'] = 'The companion service has not been set up on this site yet. Please ask the site administrator.';
 $string['pluginname'] = 'Companion service';
-$string['privacy:metadata:companion'] = 'The MAVR companion service passes positions and states between the people in a live room. It keeps them in memory only while you are in the room and stores nothing.';
+$string['privacy:metadata:companion'] = 'The VR room companion service passes positions and states between the people in a live room. It keeps them in memory only while you are in the room and stores nothing.';
 $string['privacy:metadata:companion:fullname'] = 'Your full name, shown to the other people in the live room.';
 $string['privacy:metadata:companion:ipaddress'] = 'Your IP address, which the companion service sees while your browser is connected to it.';
 $string['privacy:metadata:companion:peerid'] = 'An identifier made from your account and the activity. It does not contain your user ID and cannot be turned back into it without this site\'s secret.';
@@ -58,11 +58,11 @@ $string['privacy:metadata:livepeers:fullname'] = 'Your full name.';
 $string['privacy:metadata:livepeers:pose'] = 'Your position and direction in the room.';
 $string['privacy:metadata:livepeers:voice'] = 'Your voice, while your microphone is on.';
 $string['secret'] = 'Shared secret';
-$string['secret_desc'] = 'The MAVR_SYNC_SECRET value from the companion stack\'s .env file. This site signs room tokens with it and the companion service checks them. At least 32 characters.';
+$string['secret_desc'] = 'The VRROOM_SYNC_SECRET value from the companion stack\'s .env file. This site signs room tokens with it and the companion service checks them. At least 32 characters.';
 $string['serverurl'] = 'Address used by this server (optional)';
 $string['serverurl_desc'] = 'The address this Moodle server uses to reach the companion service for the connection test, if it differs from the address browsers use. Leave empty to use the address above.';
 $string['settingsheading'] = 'Companion service';
-$string['settingsheading_desc'] = 'With the companion service, up to 50 people can meet in a live room, and voice goes through a voice server instead of directly between browsers. Install the mavr-companion stack first (see its README), then enter its addresses and secrets here.';
+$string['settingsheading_desc'] = 'With the companion service, up to 50 people can meet in a live room, and voice goes through a voice server instead of directly between browsers. Install the vrroom-companion stack first (see its README), then enter its addresses and secrets here.';
 $string['testbrowser'] = 'Check from this browser';
 $string['testbrowserfailed'] = 'This browser could not connect to {$a}.';
 $string['testbrowserok'] = 'This browser connected to {$a}.';
@@ -76,7 +76,7 @@ $string['testconnection'] = 'Test the companion connection';
 $string['testconnection_desc'] = 'After saving these settings, <a href="{$a}">test the connection</a>.';
 $string['testdetail_badmac'] = 'The answer was not signed with this site\'s shared secret. Another server may be answering at this address.';
 $string['testdetail_clock'] = 'The clock of the companion server differs from this server\'s by more than two minutes.';
-$string['testdetail_forbidden'] = 'The companion service does not accept tokens from this site. Add {$a} to MAVR_SYNC_ISSUERS in the stack\'s .env file.';
+$string['testdetail_forbidden'] = 'The companion service does not accept tokens from this site. Add {$a} to VRROOM_SYNC_ISSUERS in the stack\'s .env file.';
 $string['testdetail_http'] = 'Unexpected answer (HTTP status {$a}).';
 $string['testdetail_invalid'] = 'The answer could not be read.';
 $string['testdetail_network'] = 'No connection: {$a}';

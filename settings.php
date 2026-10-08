@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Site settings of the MAVR companion service run mode, and its connection test page.
+ * Site settings of the VR room companion service run mode, and its connection test page.
  *
- * Included by \mod_mavr\plugininfo\mavrruntime::load_settings(), which provides $ADMIN, $settings
- * (the page mavrruntimesettingcompanion) and $parentnodename (the MAVR settings category).
+ * Included by \mod_vrroom\plugininfo\vrroomruntime::load_settings(), which provides $ADMIN, $settings
+ * (the page vrroomruntimesettingcompanion) and $parentnodename (the VR room settings category).
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,77 +28,77 @@
 defined('MOODLE_INTERNAL') || die();
 
 $ADMIN->add($parentnodename, new admin_externalpage(
-    'mavrruntimecompaniontest',
-    new lang_string('testconnection', 'mavrruntime_companion'),
-    new moodle_url('/mod/mavr/runtime/companion/testconnection.php'),
+    'vrroomruntimecompaniontest',
+    new lang_string('testconnection', 'vrroomruntime_companion'),
+    new moodle_url('/mod/vrroom/runtime/companion/testconnection.php'),
     'moodle/site:config'
 ));
 
 if ($ADMIN->fulltree) {
-    $testurl = (new moodle_url('/mod/mavr/runtime/companion/testconnection.php'))->out(false);
+    $testurl = (new moodle_url('/mod/vrroom/runtime/companion/testconnection.php'))->out(false);
     $settings->add(new admin_setting_heading(
-        'mavrruntime_companion/settingsheading',
-        new lang_string('settingsheading', 'mavrruntime_companion'),
-        get_string('settingsheading_desc', 'mavrruntime_companion') . ' '
-            . get_string('testconnection_desc', 'mavrruntime_companion', $testurl)
+        'vrroomruntime_companion/settingsheading',
+        new lang_string('settingsheading', 'vrroomruntime_companion'),
+        get_string('settingsheading_desc', 'vrroomruntime_companion') . ' '
+            . get_string('testconnection_desc', 'vrroomruntime_companion', $testurl)
     ));
 
-    $settings->add(new \mavrruntime_companion\admin\setting_baseurl(
-        'mavrruntime_companion/url',
-        new lang_string('url', 'mavrruntime_companion'),
-        new lang_string('url_desc', 'mavrruntime_companion')
+    $settings->add(new \vrroomruntime_companion\admin\setting_baseurl(
+        'vrroomruntime_companion/url',
+        new lang_string('url', 'vrroomruntime_companion'),
+        new lang_string('url_desc', 'vrroomruntime_companion')
     ));
 
-    $settings->add(new \mavrruntime_companion\admin\setting_baseurl(
-        'mavrruntime_companion/serverurl',
-        new lang_string('serverurl', 'mavrruntime_companion'),
-        new lang_string('serverurl_desc', 'mavrruntime_companion')
+    $settings->add(new \vrroomruntime_companion\admin\setting_baseurl(
+        'vrroomruntime_companion/serverurl',
+        new lang_string('serverurl', 'vrroomruntime_companion'),
+        new lang_string('serverurl_desc', 'vrroomruntime_companion')
     ));
 
-    $settings->add(new \mavrruntime_companion\admin\setting_secret(
-        'mavrruntime_companion/secret',
-        new lang_string('secret', 'mavrruntime_companion'),
-        new lang_string('secret_desc', 'mavrruntime_companion')
+    $settings->add(new \vrroomruntime_companion\admin\setting_secret(
+        'vrroomruntime_companion/secret',
+        new lang_string('secret', 'vrroomruntime_companion'),
+        new lang_string('secret_desc', 'vrroomruntime_companion')
     ));
 
-    $minsize = \mavrruntime_companion\local\config::MIN_USERS;
-    $maxsize = \mavrruntime_companion\local\config::MAX_USERS;
+    $minsize = \vrroomruntime_companion\local\config::MIN_USERS;
+    $maxsize = \vrroomruntime_companion\local\config::MAX_USERS;
     $choices = [];
     foreach (range($minsize, $maxsize) as $size) {
         $choices[$size] = (string)$size;
     }
     $settings->add(new admin_setting_configselect(
-        'mavrruntime_companion/maxusers',
-        new lang_string('maxusers', 'mavrruntime_companion'),
-        new lang_string('maxusers_desc', 'mavrruntime_companion'),
-        \mavrruntime_companion\local\config::DEFAULT_USERS,
+        'vrroomruntime_companion/maxusers',
+        new lang_string('maxusers', 'vrroomruntime_companion'),
+        new lang_string('maxusers_desc', 'vrroomruntime_companion'),
+        \vrroomruntime_companion\local\config::DEFAULT_USERS,
         $choices
     ));
 
     $settings->add(new admin_setting_heading(
-        'mavrruntime_companion/livekitheading',
-        new lang_string('livekitheading', 'mavrruntime_companion'),
-        new lang_string('livekitheading_desc', 'mavrruntime_companion')
+        'vrroomruntime_companion/livekitheading',
+        new lang_string('livekitheading', 'vrroomruntime_companion'),
+        new lang_string('livekitheading_desc', 'vrroomruntime_companion')
     ));
 
-    $settings->add(new \mavrruntime_companion\admin\setting_baseurl(
-        'mavrruntime_companion/livekiturl',
-        new lang_string('livekiturl', 'mavrruntime_companion'),
-        new lang_string('livekiturl_desc', 'mavrruntime_companion'),
-        \mavrruntime_companion\admin\setting_baseurl::KIND_LIVEKIT
+    $settings->add(new \vrroomruntime_companion\admin\setting_baseurl(
+        'vrroomruntime_companion/livekiturl',
+        new lang_string('livekiturl', 'vrroomruntime_companion'),
+        new lang_string('livekiturl_desc', 'vrroomruntime_companion'),
+        \vrroomruntime_companion\admin\setting_baseurl::KIND_LIVEKIT
     ));
 
     $settings->add(new admin_setting_configtext(
-        'mavrruntime_companion/livekitkey',
-        new lang_string('livekitkey', 'mavrruntime_companion'),
-        new lang_string('livekitkey_desc', 'mavrruntime_companion'),
+        'vrroomruntime_companion/livekitkey',
+        new lang_string('livekitkey', 'vrroomruntime_companion'),
+        new lang_string('livekitkey_desc', 'vrroomruntime_companion'),
         '',
         PARAM_ALPHANUMEXT
     ));
 
-    $settings->add(new \mavrruntime_companion\admin\setting_secret(
-        'mavrruntime_companion/livekitsecret',
-        new lang_string('livekitsecret', 'mavrruntime_companion'),
-        new lang_string('livekitsecret_desc', 'mavrruntime_companion')
+    $settings->add(new \vrroomruntime_companion\admin\setting_secret(
+        'vrroomruntime_companion/livekitsecret',
+        new lang_string('livekitsecret', 'vrroomruntime_companion'),
+        new lang_string('livekitsecret_desc', 'vrroomruntime_companion')
     ));
 }

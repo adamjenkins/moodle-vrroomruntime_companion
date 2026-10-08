@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\local;
+namespace vrroomruntime_companion\local;
 
 /**
  * The admin page's server-side connection test.
@@ -25,7 +25,7 @@ namespace mavrruntime_companion\local;
  * server answers; and it accepts the API key and secret. A failed check skips the checks that
  * depend on it. Results are plain text and never contain a secret or a token.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +46,7 @@ final class connection_tester {
     public const MAX_CLOCK_SKEW = 120;
 
     /** @var string Service name in the companion's answers. */
-    private const SERVICE = 'mavr-sync';
+    private const SERVICE = 'vrroom-sync';
 
     /** @var int Protocol version this plugin speaks. */
     private const PROTOCOL = 1;
@@ -225,10 +225,10 @@ final class connection_tester {
     }
 
     /**
-     * The problem with a companion answer's identity: not mavr-sync, or another protocol.
+     * The problem with a companion answer's identity: not vrroom-sync, or another protocol.
      *
      * @param mixed $data The decoded JSON.
-     * @return string|null Plain-text detail, or null when it is mavr-sync protocol 1.
+     * @return string|null Plain-text detail, or null when it is vrroom-sync protocol 1.
      */
     private function service_problem($data): ?string {
         if (!is_array($data) || ($data['service'] ?? null) !== self::SERVICE) {

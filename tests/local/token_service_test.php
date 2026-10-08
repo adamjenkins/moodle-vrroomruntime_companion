@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\local;
+namespace vrroomruntime_companion\local;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -22,7 +22,7 @@ use Firebase\JWT\Key;
 /**
  * Tests for the sync, test and LiveKit tokens.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @category   test
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -53,11 +53,11 @@ final class token_service_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
-        set_config('url', 'https://companion.example.org', 'mavrruntime_companion');
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
-        set_config('livekiturl', 'wss://livekit.example.org', 'mavrruntime_companion');
-        set_config('livekitkey', self::LIVEKIT_KEY, 'mavrruntime_companion');
-        set_config('livekitsecret', self::LIVEKIT_SECRET, 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org', 'vrroomruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
+        set_config('livekiturl', 'wss://livekit.example.org', 'vrroomruntime_companion');
+        set_config('livekitkey', self::LIVEKIT_KEY, 'vrroomruntime_companion');
+        set_config('livekitsecret', self::LIVEKIT_SECRET, 'vrroomruntime_companion');
         JWT::$timestamp = self::NOW;
     }
 
@@ -80,7 +80,7 @@ final class token_service_test extends \advanced_testcase {
         $claims = (array)JWT::decode($result['token'], new Key(self::SECRET, 'HS256'));
         $this->assertSame([
             'iss' => config::issuer(),
-            'aud' => 'mavr-sync',
+            'aud' => 'vrroom-sync',
             'sub' => self::PEER,
             'room' => self::ROOM,
             'name' => 'Sam Student',
@@ -89,7 +89,7 @@ final class token_service_test extends \advanced_testcase {
             'iat' => self::NOW,
             'nbf' => self::NOW,
             'exp' => self::NOW + 300,
-            'mavr' => 'join',
+            'vrroom' => 'join',
             'v' => 1,
         ], $claims);
         $this->assertStringNotContainsString(self::SECRET, json_encode($claims));
@@ -112,8 +112,8 @@ final class token_service_test extends \advanced_testcase {
         $claims = (array)JWT::decode($first['token'], new Key(self::SECRET, 'HS256'));
         $this->assertSame([
             'iss' => config::issuer(),
-            'aud' => 'mavr-sync',
-            'mavr' => 'test',
+            'aud' => 'vrroom-sync',
+            'vrroom' => 'test',
             'v' => 1,
             'nonce' => $first['nonce'],
             'iat' => self::NOW,
@@ -177,7 +177,7 @@ final class token_service_test extends \advanced_testcase {
         $nonce = str_repeat('ab', 16);
         $expected = hash_hmac(
             'sha256',
-            "mavr-sync/challenge/1\n" . $nonce . "\nhttps://moodle.example.org\n" . self::NOW,
+            "vrroom-sync/challenge/1\n" . $nonce . "\nhttps://moodle.example.org\n" . self::NOW,
             self::SECRET
         );
         $this->assertSame($expected, token_service::challenge_mac($nonce, 'https://moodle.example.org', self::NOW));
@@ -209,14 +209,14 @@ final class token_service_test extends \advanced_testcase {
      * Tokens are refused while not configured.
      */
     public function test_not_configured(): void {
-        set_config('secret', '', 'mavrruntime_companion');
+        set_config('secret', '', 'vrroomruntime_companion');
         try {
             token_service::sync_token(self::PEER, self::ROOM, 'Sam', 'attempt', 2, self::NOW);
             $this->fail('A sync token was made without a shared secret.');
         } catch (\coding_exception $e) {
             $this->assertStringNotContainsString(self::LIVEKIT_SECRET, $e->getMessage());
         }
-        set_config('livekitsecret', '', 'mavrruntime_companion');
+        set_config('livekitsecret', '', 'vrroomruntime_companion');
         $this->expectException(\coding_exception::class);
         token_service::livekit_token(self::PEER, self::ROOM, 'Sam', 2, self::NOW);
     }

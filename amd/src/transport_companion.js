@@ -16,26 +16,26 @@
 /**
  * Companion transport: the live room through the site's companion service.
  *
- * Positions and states go over one WebSocket to mavr-sync (protocol 'mavr-sync.1', see
- * mavrruntime_companion/syncprotocol); voice goes through the companion stack's LiveKit server
+ * Positions and states go over one WebSocket to vrroom-sync (protocol 'vrroom-sync.1', see
+ * vrroomruntime_companion/syncprotocol); voice goes through the companion stack's LiveKit server
  * (microphone only). The browser never connects to other browsers, so the other people in the room
  * do not see its IP address.
  *
- * Moodle (web service mavrruntime_companion_join) runs the access checks and hands out short-lived
- * tokens: one for mavr-sync, sent in the first frame (never in the URL) and refreshed through Moodle
- * before it expires, and one for LiveKit. Peer ids, names and kinds come from mavr-sync, which takes
+ * Moodle (web service vrroomruntime_companion_join) runs the access checks and hands out short-lived
+ * tokens: one for vrroom-sync, sent in the first frame (never in the URL) and refreshed through Moodle
+ * before it expires, and one for LiveKit. Peer ids, names and kinds come from vrroom-sync, which takes
  * them from the verified token only.
  *
- * Implements the Phase 3 transport interface (mavrruntime_builtin/live/transport), so the built-in
+ * Implements the Phase 3 transport interface (vrroomruntime_builtin/live/transport), so the built-in
  * avatars, voice chat and panel work unchanged. Pose and state messages use the Phase 3 codec in both
- * directions; mavr-sync validates and re-encodes them with a copy of the same codec.
+ * directions; vrroom-sync validates and re-encodes them with a copy of the same codec.
  *
  * The per-peer maps of presence and remote voice streams follow the built-in mesh transport, which
  * adapts mod_gear's collaborative mode.
  *
  * Nothing about tokens or names is logged; core/log receives close codes and states only.
  *
- * @module     mavrruntime_companion/transport_companion
+ * @module     vrroomruntime_companion/transport_companion
  * @copyright  2026 Boban Blagojevic
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,13 +43,13 @@
 
 import Ajax from 'core/ajax';
 import Log from 'core/log';
-import {Transport} from 'mavrruntime_builtin/live/transport';
-import {encode, decode} from 'mavrruntime_builtin/live/codec';
-import * as Proto from 'mavrruntime_companion/syncprotocol';
-import {Room, RoomEvent, Track} from 'mavrruntime_companion/livekit';
+import {Transport} from 'vrroomruntime_builtin/live/transport';
+import {encode, decode} from 'vrroomruntime_builtin/live/codec';
+import * as Proto from 'vrroomruntime_companion/syncprotocol';
+import {Room, RoomEvent, Track} from 'vrroomruntime_companion/livekit';
 
 /** Web service that runs the access checks and returns the tokens. */
-const JOIN_METHOD = 'mavrruntime_companion_join';
+const JOIN_METHOD = 'vrroomruntime_companion_join';
 
 /** Timeout of a join service call (ms). */
 const REQUEST_TIMEOUT = 10000;
@@ -82,7 +82,7 @@ const OPEN = 1;
 const MAX_PING = 2147483647;
 
 /** Prefix of debug log lines. */
-const LOGPREFIX = 'mavrruntime_companion/transport_companion: ';
+const LOGPREFIX = 'vrroomruntime_companion/transport_companion: ';
 
 /** Join service error codes → state reasons. */
 const REASONS = Object.freeze({
@@ -966,7 +966,7 @@ class CompanionTransport extends Transport {
                 return;
             }
             if (isNetworkError(error)) {
-                // Try again; mavr-sync closes the session (4410) if the token runs out first.
+                // Try again; vrroom-sync closes the session (4410) if the token runs out first.
                 this.scheduleRefresh(REFRESH_RETRY);
                 return;
             }
@@ -1431,7 +1431,7 @@ class CompanionTransport extends Transport {
     }
 
     /**
-     * Send to everybody in the room through mavr-sync.
+     * Send to everybody in the room through vrroom-sync.
      *
      * @param {string} channel 'pose' or 'state'.
      * @param {Object} message
@@ -1458,7 +1458,7 @@ class CompanionTransport extends Transport {
     }
 
     /**
-     * Send to one peer through mavr-sync (states only; poses always go to everybody).
+     * Send to one peer through vrroom-sync (states only; poses always go to everybody).
      *
      * @param {string} peerid
      * @param {string} channel 'pose' or 'state'.

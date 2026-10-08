@@ -1,7 +1,7 @@
-# MAVR companion service run mode (`mavrruntime_companion`)
+# VR room companion service run mode (`vrroomruntime_companion`)
 
-A run mode for the MAVR activity (`mod_mavr`) that keeps the built-in 3D
-viewer but sends live rooms through the **mavr-companion** container stack. With it, up to 50
+A run mode for the VR room activity (`mod_vrroom`) that keeps the built-in 3D
+viewer but sends live rooms through the **vrroom-companion** container stack. With it, up to 50
 people can meet in a live room, see each other as avatars and talk, and their browsers connect to
 the companion service and its voice server instead of directly to each other, so participants no
 longer see each other's IP addresses.
@@ -14,8 +14,8 @@ service stores nothing and grades nothing.
 ## Requirements
 
 - Moodle 5.2 (`$plugin->supported = [502, 502]`).
-- `mod_mavr` and its built-in run mode `mavrruntime_builtin`, version 2026100800 or later.
-- The **mavr-companion** stack (separate repository): the `mavr-sync` room service and, for voice,
+- `mod_vrroom` and its built-in run mode `vrroomruntime_builtin`, version 2026100800 or later.
+- The **vrroom-companion** stack (separate repository): the `vrroom-sync` room service and, for voice,
   a LiveKit server. Its README explains the installation with rootless Podman (Quadlet units or
   `podman compose`) or Docker, and the reverse proxy for TLS.
 - HTTPS for the companion and LiveKit addresses in production (browsers allow the microphone only
@@ -23,25 +23,25 @@ service stores nothing and grades nothing.
 
 ## Installation
 
-1. Copy this repository to `public/mod/mavr/runtime/companion` in your Moodle code.
+1. Copy this repository to `public/mod/vrroom/runtime/companion` in your Moodle code.
 2. Visit *Site administration > Notifications* to install it.
-3. Install and start the mavr-companion stack, and add this site's address to its
-   `MAVR_SYNC_ISSUERS` setting.
+3. Install and start the vrroom-companion stack, and add this site's address to its
+   `VRROOM_SYNC_ISSUERS` setting.
 4. Enter the settings below, then open *Test the companion connection*.
 
 ## Settings
 
-*Site administration > Plugins > Activity modules > MAVR > Companion service*:
+*Site administration > Plugins > Activity modules > VR room > Companion service*:
 
 | Setting | Name | Notes |
 |---|---|---|
-| Companion address | `mavrruntime_companion/url` | The address browsers use, for example `https://companion.example.org`. Browsers open a WebSocket to its `/sync` path. `http://` is accepted for testing only. A path prefix is allowed. |
-| Address used by this server | `mavrruntime_companion/serverurl` | Optional. The address Moodle uses for the connection test, if it differs (for example `http://127.0.0.1:8090` when the stack runs on the same host). |
-| Shared secret | `mavrruntime_companion/secret` | The stack's `MAVR_SYNC_SECRET`; at least 32 characters, no spaces. Moodle signs room tokens with it; it is never sent anywhere. |
-| Maximum people per room | `mavrruntime_companion/maxusers` | 2 to 50 (default 50). Teachers choose the room size of each activity up to this value. |
-| LiveKit address | `mavrruntime_companion/livekiturl` | For voice, for example `wss://livekit.example.org` (no path). |
-| LiveKit API key | `mavrruntime_companion/livekitkey` | The stack's `LIVEKIT_API_KEY`. |
-| LiveKit API secret | `mavrruntime_companion/livekitsecret` | The stack's `LIVEKIT_API_SECRET`; at least 32 characters. It stays on the Moodle server: browsers receive only short-lived room tokens made with it. |
+| Companion address | `vrroomruntime_companion/url` | The address browsers use, for example `https://companion.example.org`. Browsers open a WebSocket to its `/sync` path. `http://` is accepted for testing only. A path prefix is allowed. |
+| Address used by this server | `vrroomruntime_companion/serverurl` | Optional. The address Moodle uses for the connection test, if it differs (for example `http://127.0.0.1:8090` when the stack runs on the same host). |
+| Shared secret | `vrroomruntime_companion/secret` | The stack's `VRROOM_SYNC_SECRET`; at least 32 characters, no spaces. Moodle signs room tokens with it; it is never sent anywhere. |
+| Maximum people per room | `vrroomruntime_companion/maxusers` | 2 to 50 (default 50). Teachers choose the room size of each activity up to this value. |
+| LiveKit address | `vrroomruntime_companion/livekiturl` | For voice, for example `wss://livekit.example.org` (no path). |
+| LiveKit API key | `vrroomruntime_companion/livekitkey` | The stack's `LIVEKIT_API_KEY`. |
+| LiveKit API secret | `vrroomruntime_companion/livekitsecret` | The stack's `LIVEKIT_API_SECRET`; at least 32 characters. It stays on the Moodle server: browsers receive only short-lived room tokens made with it. |
 
 Leave the three LiveKit settings empty for live rooms without voice; set all three or none.
 
@@ -51,8 +51,8 @@ test page to check the connection.
 
 ## Test the connection
 
-*Site administration > Plugins > Activity modules > MAVR > Test the companion connection*
-(`/mod/mavr/runtime/companion/testconnection.php`, needs `moodle/site:config`). **Run the test**
+*Site administration > Plugins > Activity modules > VR room > Test the companion connection*
+(`/mod/vrroom/runtime/companion/testconnection.php`, needs `moodle/site:config`). **Run the test**
 makes these checks from the Moodle server and shows each as passed, failed or not run:
 
 1. The settings are complete.
@@ -75,8 +75,8 @@ the companion often runs on the same host or network, and they never follow redi
 - A teacher chooses the run mode **Companion service** for an activity and turns on **Live mode**
   with up to 50 participants.
 - When a student presses *Join the live room*, the browser asks Moodle
-  (`mavrruntime_companion_join`) for a room token. Moodle makes the same checks as the built-in
-  live mode (an own attempt in progress, or a teacher preview with `mod/mavr:manage`; group
+  (`vrroomruntime_companion_join`) for a room token. Moodle makes the same checks as the built-in
+  live mode (an own attempt in progress, or a teacher preview with `mod/vrroom:manage`; group
   membership in group mode) and signs a token valid for five minutes. The browser renews it every
   four minutes through Moodle, which repeats every check, so someone who loses access (attempt
   finished, removed from the group, live mode turned off) leaves the room within five minutes.

@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion;
+namespace vrroomruntime_companion;
 
-use mod_mavr\local\runtime\cleanup_scope;
-use mod_mavr\local\runtime\launch_descriptor;
-use mod_mavr\local\runtime\registry;
+use mod_vrroom\local\runtime\cleanup_scope;
+use mod_vrroom\local\runtime\launch_descriptor;
+use mod_vrroom\local\runtime\registry;
 
 /**
  * Tests for the companion service run mode.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @category   test
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,7 +44,7 @@ final class runtime_test extends \advanced_testcase {
         $runtime = registry::get('companion');
         $this->assertInstanceOf(runtime::class, $runtime);
         $this->assertSame('companion', $runtime->get_name());
-        $this->assertSame(get_string('pluginname', 'mavrruntime_companion'), $runtime->get_display_name());
+        $this->assertSame(get_string('pluginname', 'vrroomruntime_companion'), $runtime->get_display_name());
         $this->assertArrayHasKey('companion', registry::get_choices());
     }
 
@@ -57,7 +57,7 @@ final class runtime_test extends \advanced_testcase {
 
         $ready = $runtime->readiness();
         $this->assertFalse($ready->ready);
-        $this->assertSame(get_string('notconfigured', 'mavrruntime_companion'), $ready->message);
+        $this->assertSame(get_string('notconfigured', 'vrroomruntime_companion'), $ready->message);
         $caps = $runtime->capabilities();
         $this->assertSame(1, $caps->maxusers);
         $this->assertFalse($caps->voice);
@@ -66,11 +66,11 @@ final class runtime_test extends \advanced_testcase {
         $this->assertSame(['visit_zone', 'interact', 'answer_question', 'collect', 'sequence'], $caps->objectivetypes);
 
         // A secret one character too short is not enough.
-        set_config('url', 'https://companion.example.org', 'mavrruntime_companion');
-        set_config('secret', str_repeat('x', 31), 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org', 'vrroomruntime_companion');
+        set_config('secret', str_repeat('x', 31), 'vrroomruntime_companion');
         $this->assertFalse($runtime->readiness()->ready);
 
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
         $ready = $runtime->readiness();
         $this->assertTrue($ready->ready);
         $this->assertSame('', $ready->message);
@@ -80,7 +80,7 @@ final class runtime_test extends \advanced_testcase {
         $this->assertTrue($caps->avatars);
 
         // The site's maximum is respected.
-        set_config('maxusers', 12, 'mavrruntime_companion');
+        set_config('maxusers', 12, 'vrroomruntime_companion');
         $this->assertSame(12, $runtime->capabilities()->maxusers);
 
         // Voice once LiveKit is set up.
@@ -96,15 +96,15 @@ final class runtime_test extends \advanced_testcase {
         $this->resetAfterTest();
         $runtime = new runtime();
         $this->assertSame('browser', $runtime->statement_channel());
-        $this->assertSame(['module' => 'mavrruntime_builtin/launch', 'function' => 'init'], $runtime->client_entry());
-        $this->assertSame(\mavrruntime_builtin\runtime::CLIENT_MODULE, $runtime->client_entry()['module']);
+        $this->assertSame(['module' => 'vrroomruntime_builtin/launch', 'function' => 'init'], $runtime->client_entry());
+        $this->assertSame(\vrroomruntime_builtin\runtime::CLIENT_MODULE, $runtime->client_entry()['module']);
 
         // Cleanup has nothing to do for any scope, and writes nothing.
-        $before = $DB->count_records('config_plugins', ['plugin' => 'mavrruntime_companion']);
+        $before = $DB->count_records('config_plugins', ['plugin' => 'vrroomruntime_companion']);
         $runtime->cleanup(new cleanup_scope(cleanup_scope::COURSE_RESET, 2));
         $runtime->cleanup(new cleanup_scope(cleanup_scope::INSTANCE_DELETE, 2, 3));
         $runtime->cleanup(new cleanup_scope(cleanup_scope::USER_DELETE, 0, 0, 4));
-        $this->assertSame($before, $DB->count_records('config_plugins', ['plugin' => 'mavrruntime_companion']));
+        $this->assertSame($before, $DB->count_records('config_plugins', ['plugin' => 'vrroomruntime_companion']));
     }
 
     /**
@@ -114,16 +114,16 @@ final class runtime_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->configure();
         $this->configure_livekit();
-        [$cm, $mavr, $student] = $this->create_activity(['livemode' => 1, 'livemaxusers' => 30]);
-        /** @var \mod_mavr_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_mavr');
-        $attempt = $generator->create_attempt((int)$mavr->id, (int)$student->id);
+        [$cm, $vrroom, $student] = $this->create_activity(['livemode' => 1, 'livemaxusers' => 30]);
+        /** @var \mod_vrroom_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_vrroom');
+        $attempt = $generator->create_attempt((int)$vrroom->id, (int)$student->id);
         $this->setUser($student);
 
         $descriptor = registry::get('companion')->launch($cm, $attempt, $student);
         $this->assertSame(launch_descriptor::TYPE_INLINE, $descriptor->type);
         $config = $descriptor->config;
-        $this->assertSame('mavr-launch/1', $config['schema']);
+        $this->assertSame('vrroom-launch/1', $config['schema']);
         $this->assertEquals($attempt->id, $config['attemptid']);
 
         $live = $config['live'];
@@ -132,13 +132,13 @@ final class runtime_test extends \advanced_testcase {
         $this->assertTrue($live['available']);
         $this->assertTrue($live['canjoin']);
         $this->assertSame('companion', $live['transport']);
-        $this->assertSame('mavrruntime_companion/transport_companion', $live['transportmodule']);
+        $this->assertSame('vrroomruntime_companion/transport_companion', $live['transportmodule']);
         $this->assertSame((int)$cm->id, $live['cmid']);
         $this->assertSame((int)$attempt->id, $live['attemptid']);
         $this->assertSame(30, $live['maxpeers']);
         $this->assertSame(fullname($student), $live['selfname']);
         $this->assertTrue($live['voice']);
-        $this->assertSame(get_string('livenotice', 'mavrruntime_companion'), $live['notice']);
+        $this->assertSame(get_string('livenotice', 'vrroomruntime_companion'), $live['notice']);
 
         // No secret in what the browser receives.
         $json = json_encode($descriptor->to_array());
@@ -180,7 +180,7 @@ final class runtime_test extends \advanced_testcase {
         $this->assertSame(0, $live['maxpeers']);
         $this->assertSame('', $live['selfname']);
         $this->assertFalse($live['voice']);
-        $this->assertSame('mavrruntime_companion/transport_companion', $live['transportmodule']);
+        $this->assertSame('vrroomruntime_companion/transport_companion', $live['transportmodule']);
         $this->assertNotSame('', $live['notice']);
     }
 
@@ -188,24 +188,24 @@ final class runtime_test extends \advanced_testcase {
      * Set the companion address and secret.
      */
     private function configure(): void {
-        set_config('url', 'https://companion.example.org', 'mavrruntime_companion');
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org', 'vrroomruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
     }
 
     /**
      * Set the three LiveKit settings.
      */
     private function configure_livekit(): void {
-        set_config('livekiturl', 'wss://livekit.example.org', 'mavrruntime_companion');
-        set_config('livekitkey', 'APIkey123', 'mavrruntime_companion');
-        set_config('livekitsecret', self::LIVEKIT_SECRET, 'mavrruntime_companion');
+        set_config('livekiturl', 'wss://livekit.example.org', 'vrroomruntime_companion');
+        set_config('livekitkey', 'APIkey123', 'vrroomruntime_companion');
+        set_config('livekitsecret', self::LIVEKIT_SECRET, 'vrroomruntime_companion');
     }
 
     /**
      * Create an activity of this run mode with a student and a teacher.
      *
      * @param array $fields Extra activity fields.
-     * @return array [cm_info, mavr row, student, teacher]
+     * @return array [cm_info, vrroom row, student, teacher]
      */
     private function create_activity(array $fields = []): array {
         global $DB;
@@ -213,11 +213,11 @@ final class runtime_test extends \advanced_testcase {
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $record = $this->getDataGenerator()->create_module(
-            'mavr',
+            'vrroom',
             ['course' => $course->id, 'runtime' => 'companion'] + $fields
         );
         $cm = get_fast_modinfo($course)->get_cm($record->cmid);
-        $mavr = $DB->get_record('mavr', ['id' => $record->id], '*', MUST_EXIST);
-        return [$cm, $mavr, $student, $teacher];
+        $vrroom = $DB->get_record('vrroom', ['id' => $record->id], '*', MUST_EXIST);
+        return [$cm, $vrroom, $student, $teacher];
     }
 }

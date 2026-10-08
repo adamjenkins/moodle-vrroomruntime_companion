@@ -17,32 +17,32 @@
 /**
  * The companion service run mode.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mavrruntime_companion;
+namespace vrroomruntime_companion;
 
-use mavrruntime_companion\local\access;
-use mavrruntime_companion\local\config;
-use mod_mavr\local\launch\config_builder;
-use mod_mavr\local\runtime\base;
-use mod_mavr\local\runtime\cleanup_scope;
-use mod_mavr\local\runtime\launch_descriptor;
-use mod_mavr\local\runtime\readiness_result;
-use mod_mavr\local\runtime\runtime_capabilities;
+use vrroomruntime_companion\local\access;
+use vrroomruntime_companion\local\config;
+use mod_vrroom\local\launch\config_builder;
+use mod_vrroom\local\runtime\base;
+use mod_vrroom\local\runtime\cleanup_scope;
+use mod_vrroom\local\runtime\launch_descriptor;
+use mod_vrroom\local\runtime\readiness_result;
+use mod_vrroom\local\runtime\runtime_capabilities;
 
 /**
  * Companion run mode: the built-in viewer, with live rooms of up to 50 people through the
- * mavr-companion stack (mavr-sync for positions and states, LiveKit for voice).
+ * vrroom-companion stack (vrroom-sync for positions and states, LiveKit for voice).
  *
  * The viewer, avatars, voice controls and panels are the built-in run mode's; only the live
- * transport differs (mavrruntime_companion/transport_companion). Statements still go from the
+ * transport differs (vrroomruntime_companion/transport_companion). Statements still go from the
  * browser to Moodle. The companion stores nothing and grades nothing, and this plugin keeps no
  * data of its own, so cleanup has nothing to remove.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -79,7 +79,7 @@ class runtime extends base {
      * Inline launch in the built-in viewer, with the companion's live block.
      *
      * @param \cm_info $cm The course module.
-     * @param \stdClass $attempt The attempt row (mavr_attempts).
+     * @param \stdClass $attempt The attempt row (vrroom_attempts).
      * @param \stdClass $user The user who launches.
      * @return launch_descriptor
      */
@@ -124,8 +124,8 @@ class runtime extends base {
      */
     public function client_entry(): array {
         return [
-            'module' => \mavrruntime_builtin\runtime::CLIENT_MODULE,
-            'function' => \mavrruntime_builtin\runtime::CLIENT_FUNCTION,
+            'module' => \vrroomruntime_builtin\runtime::CLIENT_MODULE,
+            'function' => \vrroomruntime_builtin\runtime::CLIENT_FUNCTION,
         ];
     }
 
@@ -139,10 +139,10 @@ class runtime extends base {
      */
     protected function build_descriptor(\cm_info $cm, ?\stdClass $attempt, \stdClass $user): launch_descriptor {
         global $DB;
-        $mavr = $DB->get_record('mavr', ['id' => $cm->instance], '*', MUST_EXIST);
+        $vrroom = $DB->get_record('vrroom', ['id' => $cm->instance], '*', MUST_EXIST);
         $context = \context_module::instance($cm->id);
-        $config = config_builder::build($cm, $context, $mavr, $attempt, $user);
-        $config['live'] = access::launch_block($cm, $context, $mavr, $attempt, $user);
+        $config = config_builder::build($cm, $context, $vrroom, $attempt, $user);
+        $config['live'] = access::launch_block($cm, $context, $vrroom, $attempt, $user);
         return new launch_descriptor(launch_descriptor::TYPE_INLINE, $config);
     }
 }

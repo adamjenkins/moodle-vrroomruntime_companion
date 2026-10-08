@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\local;
+namespace vrroomruntime_companion\local;
 
 /**
  * Site settings of the companion run mode, the addresses derived from them, and the pseudonyms.
@@ -22,13 +22,13 @@ namespace mavrruntime_companion\local;
  * The companion service and LiveKit never learn user, activity or group ids: peers and rooms are
  * named by HMACs over a per-site random salt that stays in this site's configuration.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class config {
     /** @var string This component. */
-    public const COMPONENT = 'mavrruntime_companion';
+    public const COMPONENT = 'vrroomruntime_companion';
 
     /** @var int Shortest shared secret or LiveKit API secret accepted. */
     public const MIN_SECRET_LENGTH = 32;
@@ -36,7 +36,7 @@ final class config {
     /** @var int Smallest room. */
     public const MIN_USERS = 2;
 
-    /** @var int Largest room (mod_mavr clamps livemaxusers to the same value). */
+    /** @var int Largest room (mod_vrroom clamps livemaxusers to the same value). */
     public const MAX_USERS = 50;
 
     /** @var int Default largest room. */
@@ -272,22 +272,22 @@ final class config {
      * The peer id of a user in an activity (stable, so a second tab replaces the first).
      *
      * @param int $userid The user.
-     * @param int $mavrid The activity.
+     * @param int $vrroomid The activity.
      * @return string 32 lowercase hex characters.
      */
-    public static function peer_id(int $userid, int $mavrid): string {
-        return self::pseudonym("peer|{$userid}|{$mavrid}");
+    public static function peer_id(int $userid, int $vrroomid): string {
+        return self::pseudonym("peer|{$userid}|{$vrroomid}");
     }
 
     /**
      * The room id of an activity's room, or of one of its groups' rooms.
      *
-     * @param int $mavrid The activity.
+     * @param int $vrroomid The activity.
      * @param int $groupid The group, 0 without groups.
      * @return string 'r' and 32 lowercase hex characters.
      */
-    public static function room_id(int $mavrid, int $groupid): string {
-        return 'r' . self::pseudonym("room|{$mavrid}|{$groupid}");
+    public static function room_id(int $vrroomid, int $groupid): string {
+        return 'r' . self::pseudonym("room|{$vrroomid}|{$groupid}");
     }
 
     /**

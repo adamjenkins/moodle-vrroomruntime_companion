@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\admin;
+namespace vrroomruntime_companion\admin;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 
-use mavrruntime_companion\local\config;
+use vrroomruntime_companion\local\config;
 
 /**
  * An address setting: the companion service (https://, or http:// for testing) or the LiveKit
  * server (wss://, or ws:// for testing, without a path). Empty means not configured.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,7 +44,7 @@ class setting_baseurl extends \admin_setting_configtext {
     /**
      * Constructor.
      *
-     * @param string $name Setting name, 'mavrruntime_companion/<name>'.
+     * @param string $name Setting name, 'vrroomruntime_companion/<name>'.
      * @param \lang_string|string $visiblename Label.
      * @param \lang_string|string $description Description.
      * @param string $kind KIND_COMPANION or KIND_LIVEKIT.

@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web services of the MAVR companion service run mode.
+ * Web services of the VR room companion service run mode.
  *
  * The join service writes nothing except the pseudonym salt on its first use, so it is a read
  * service. It is not a read-only-session service: the default group lookup may write $SESSION.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,11 +28,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'mavrruntime_companion_join' => [
-        'classname' => \mavrruntime_companion\external\join::class,
-        'description' => 'Get the short-lived tokens to join (or stay in) the companion live room of a MAVR activity.',
+    'vrroomruntime_companion_join' => [
+        'classname' => \vrroomruntime_companion\external\join::class,
+        'description' => 'Get the short-lived tokens to join (or stay in) the companion live room of a VR room activity.',
         'type' => 'read',
         'ajax' => true,
-        'capabilities' => 'mod/mavr:view',
+        'capabilities' => 'mod/vrroom:view',
     ],
 ];

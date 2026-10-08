@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\local;
+namespace vrroomruntime_companion\local;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -22,7 +22,7 @@ use Firebase\JWT\Key;
 /**
  * Tests for the admin connection test, with a scripted HTTP client (no network).
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @category   test
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -39,7 +39,7 @@ final class connection_tester_test extends \advanced_testcase {
     private const NOW = 1760000000;
 
     /** @var string Health answer of a working companion. */
-    private const HEALTHY = '{"status":"ok","service":"mavr-sync","protocol":1}';
+    private const HEALTHY = '{"status":"ok","service":"vrroom-sync","protocol":1}';
 
     /** @var array Requests the fake client received. */
     private array $requests = [];
@@ -50,8 +50,8 @@ final class connection_tester_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
-        set_config('url', 'https://companion.example.org', 'mavrruntime_companion');
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org', 'vrroomruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
         JWT::$timestamp = self::NOW;
         $this->requests = [];
     }
@@ -68,32 +68,32 @@ final class connection_tester_test extends \advanced_testcase {
      * Not configured: the settings check fails and the companion checks are not run.
      */
     public function test_not_configured(): void {
-        set_config('secret', '', 'mavrruntime_companion');
+        set_config('secret', '', 'vrroomruntime_companion');
         $results = $this->run_tester(fn() => $this->fail_request());
         $this->assertSame(['settings', 'health', 'challenge', 'livekit', 'livekitauth'], array_column($results, 'check'));
-        $this->assert_result($results, 'settings', 'fail', get_string('notconfigured', 'mavrruntime_companion'));
+        $this->assert_result($results, 'settings', 'fail', get_string('notconfigured', 'vrroomruntime_companion'));
         $this->assert_result($results, 'health', 'skip', '');
         $this->assert_result($results, 'challenge', 'skip', '');
-        $novoice = get_string('testdetail_novoice', 'mavrruntime_companion');
+        $novoice = get_string('testdetail_novoice', 'vrroomruntime_companion');
         $this->assert_result($results, 'livekit', 'skip', $novoice);
         $this->assert_result($results, 'livekitauth', 'skip', $novoice);
         $this->assertSame([], $this->requests);
     }
 
     /**
-     * Health failures: network error, HTTP 500, not mavr-sync, another protocol.
+     * Health failures: network error, HTTP 500, not vrroom-sync, another protocol.
      */
     public function test_health_failures(): void {
         $cases = [
             [['status' => 0, 'body' => '', 'error' => 'Connection refused'],
-                get_string('testdetail_network', 'mavrruntime_companion', 'Connection refused')],
-            [['status' => 500, 'body' => 'oops', 'error' => ''], get_string('testdetail_http', 'mavrruntime_companion', 500)],
+                get_string('testdetail_network', 'vrroomruntime_companion', 'Connection refused')],
+            [['status' => 500, 'body' => 'oops', 'error' => ''], get_string('testdetail_http', 'vrroomruntime_companion', 500)],
             [['status' => 200, 'body' => '<html>Welcome</html>', 'error' => ''],
-                get_string('testdetail_invalid', 'mavrruntime_companion')],
+                get_string('testdetail_invalid', 'vrroomruntime_companion')],
             [['status' => 200, 'body' => '{"service":"something-else","protocol":1}', 'error' => ''],
-                get_string('testdetail_invalid', 'mavrruntime_companion')],
-            [['status' => 200, 'body' => '{"service":"mavr-sync","protocol":2}', 'error' => ''],
-                get_string('testdetail_protocol', 'mavrruntime_companion', '2')],
+                get_string('testdetail_invalid', 'vrroomruntime_companion')],
+            [['status' => 200, 'body' => '{"service":"vrroom-sync","protocol":2}', 'error' => ''],
+                get_string('testdetail_protocol', 'vrroomruntime_companion', '2')],
         ];
         foreach ($cases as [$response, $detail]) {
             $this->requests = [];
@@ -111,7 +111,7 @@ final class connection_tester_test extends \advanced_testcase {
      * The server address is used for the server-side checks when set.
      */
     public function test_server_url(): void {
-        set_config('serverurl', 'http://127.0.0.1:8090', 'mavrruntime_companion');
+        set_config('serverurl', 'http://127.0.0.1:8090', 'vrroomruntime_companion');
         $this->run_tester(fn() => ['status' => 0, 'body' => '', 'error' => 'refused']);
         $this->assertSame('http://127.0.0.1:8090/healthz', $this->requests[0]['url']);
     }
@@ -127,8 +127,8 @@ final class connection_tester_test extends \advanced_testcase {
         $request = $this->requests[1];
         $this->assertSame('https://companion.example.org/v1/challenge', $request['url']);
         $claims = $this->bearer_claims($request['headers'], self::SECRET);
-        $this->assertSame('test', $claims['mavr']);
-        $this->assertSame('mavr-sync', $claims['aud']);
+        $this->assertSame('test', $claims['vrroom']);
+        $this->assertSame('vrroom-sync', $claims['aud']);
         $this->assertSame(config::issuer(), $claims['iss']);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $claims['nonce']);
         $this->assertSame(self::NOW + 60, $claims['exp']);
@@ -141,7 +141,7 @@ final class connection_tester_test extends \advanced_testcase {
     public function test_challenge_refused(): void {
         $results = $this->run_tester($this->companion(fn() => ['status' => 401, 'body' => '{"error":"unauthorised"}',
             'error' => '']));
-        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_unauthorised', 'mavrruntime_companion'));
+        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_unauthorised', 'vrroomruntime_companion'));
 
         $results = $this->run_tester($this->companion(fn() => ['status' => 403, 'body' => '{"error":"forbidden"}',
             'error' => '']));
@@ -149,19 +149,19 @@ final class connection_tester_test extends \advanced_testcase {
             $results,
             'challenge',
             'fail',
-            get_string('testdetail_forbidden', 'mavrruntime_companion', config::issuer())
+            get_string('testdetail_forbidden', 'vrroomruntime_companion', config::issuer())
         );
         $this->assertStringContainsString(config::issuer(), $this->find_result($results, 'challenge')['detail']);
 
         $results = $this->run_tester($this->companion(fn() => ['status' => 429, 'body' => '', 'error' => '']));
-        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_http', 'mavrruntime_companion', 429));
+        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_http', 'vrroomruntime_companion', 429));
     }
 
     /**
      * A wrong MAC, a changed nonce and a stale timestamp fail.
      */
     public function test_challenge_bad_answers(): void {
-        $badmac = get_string('testdetail_badmac', 'mavrruntime_companion');
+        $badmac = get_string('testdetail_badmac', 'vrroomruntime_companion');
 
         // Signed with another secret: a stranger's server.
         $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer(
@@ -179,7 +179,7 @@ final class connection_tester_test extends \advanced_testcase {
 
         // A clock 121 seconds off.
         $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer($claims, ['ts' => self::NOW + 121])));
-        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_clock', 'mavrruntime_companion'));
+        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_clock', 'vrroomruntime_companion'));
 
         // 120 seconds off is still fine.
         $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer($claims, ['ts' => self::NOW - 120])));
@@ -194,8 +194,8 @@ final class connection_tester_test extends \advanced_testcase {
 
         // Missing fields.
         $results = $this->run_tester($this->companion(fn() => ['status' => 200,
-            'body' => '{"service":"mavr-sync","protocol":1}', 'error' => '']));
-        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_invalid', 'mavrruntime_companion'));
+            'body' => '{"service":"vrroom-sync","protocol":1}', 'error' => '']));
+        $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_invalid', 'vrroomruntime_companion'));
     }
 
     /**
@@ -204,13 +204,13 @@ final class connection_tester_test extends \advanced_testcase {
     public function test_livekit(): void {
         $companion = $this->companion(fn(array $claims) => $this->answer($claims));
 
-        set_config('livekiturl', 'wss://livekit.example.org', 'mavrruntime_companion');
+        set_config('livekiturl', 'wss://livekit.example.org', 'vrroomruntime_companion');
         $results = $this->run_tester($companion);
-        $this->assert_result($results, 'livekit', 'fail', get_string('errorlivekitincomplete', 'mavrruntime_companion'));
+        $this->assert_result($results, 'livekit', 'fail', get_string('errorlivekitincomplete', 'vrroomruntime_companion'));
         $this->assert_result($results, 'livekitauth', 'skip', '');
 
-        set_config('livekitkey', 'APIkey123', 'mavrruntime_companion');
-        set_config('livekitsecret', self::LIVEKIT_SECRET, 'mavrruntime_companion');
+        set_config('livekitkey', 'APIkey123', 'vrroomruntime_companion');
+        set_config('livekitsecret', self::LIVEKIT_SECRET, 'vrroomruntime_companion');
 
         // LiveKit down.
         $results = $this->run_tester(function (string $method, string $url, array $headers) use ($companion) {
@@ -219,7 +219,7 @@ final class connection_tester_test extends \advanced_testcase {
             }
             return $companion($method, $url, $headers);
         });
-        $this->assert_result($results, 'livekit', 'fail', get_string('testdetail_network', 'mavrruntime_companion', 'timeout'));
+        $this->assert_result($results, 'livekit', 'fail', get_string('testdetail_network', 'vrroomruntime_companion', 'timeout'));
         $this->assert_result($results, 'livekitauth', 'skip', '');
 
         // Key refused.
@@ -233,7 +233,7 @@ final class connection_tester_test extends \advanced_testcase {
             return $companion($method, $url, $headers);
         });
         $this->assert_result($results, 'livekit', 'ok', '');
-        $this->assert_result($results, 'livekitauth', 'fail', get_string('testdetail_unauthorised', 'mavrruntime_companion'));
+        $this->assert_result($results, 'livekitauth', 'fail', get_string('testdetail_unauthorised', 'vrroomruntime_companion'));
 
         // Everything passes.
         $this->requests = [];
@@ -332,7 +332,7 @@ final class connection_tester_test extends \advanced_testcase {
     }
 
     /**
-     * A challenge answer as mavr-sync makes it, with optional changes.
+     * A challenge answer as vrroom-sync makes it, with optional changes.
      *
      * @param array $claims The verified test token's claims.
      * @param array $change Overrides: secret, nonce, ts, iss.
@@ -342,8 +342,8 @@ final class connection_tester_test extends \advanced_testcase {
         $nonce = $change['nonce'] ?? $claims['nonce'];
         $ts = $change['ts'] ?? self::NOW;
         $iss = $change['iss'] ?? $claims['iss'];
-        $mac = hash_hmac('sha256', "mavr-sync/challenge/1\n{$nonce}\n{$iss}\n{$ts}", $change['secret'] ?? self::SECRET);
-        return ['status' => 200, 'error' => '', 'body' => json_encode(['service' => 'mavr-sync', 'protocol' => 1,
+        $mac = hash_hmac('sha256', "vrroom-sync/challenge/1\n{$nonce}\n{$iss}\n{$ts}", $change['secret'] ?? self::SECRET);
+        return ['status' => 200, 'error' => '', 'body' => json_encode(['service' => 'vrroom-sync', 'protocol' => 1,
             'version' => '0.1.0', 'nonce' => $nonce, 'ts' => $ts, 'livekitadmin' => false, 'mac' => $mac])];
     }
 

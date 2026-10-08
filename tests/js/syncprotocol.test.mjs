@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Tests of the client side of the companion wire protocol (mavrruntime_companion/syncprotocol).
+ * Tests of the client side of the companion wire protocol (vrroomruntime_companion/syncprotocol).
  *
  * Run from the repository root: node --test tests/js/syncprotocol.test.mjs
  *
@@ -60,7 +60,7 @@ const welcome = (changes = {}) => Object.assign({
 const roundtrip = (frame) => parse(JSON.stringify(frame));
 
 test('constants', () => {
-    assert.equal(SUBPROTOCOL, 'mavr-sync.1');
+    assert.equal(SUBPROTOCOL, 'vrroom-sync.1');
     assert.equal(MAX_FRAME, 4096);
     assert.equal(GIVE_UP_AFTER, 120000);
     assert.deepEqual(Object.assign({}, CLOSE), {

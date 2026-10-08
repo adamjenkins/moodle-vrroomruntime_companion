@@ -14,26 +14,26 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Client side of the companion wire protocol 'mavr-sync.1': frame builders, the parser of server
+ * Client side of the companion wire protocol 'vrroom-sync.1': frame builders, the parser of server
  * frames, the close-code table and the reconnect and refresh timings.
  *
  * Every frame is one JSON object with a type 't'. Client frames: hello {token}, auth {token},
  * pose {d}, state {d, to?}, ping {n}, leave. Server frames: welcome, join, leave, poses, state,
  * authok, pong, error. Pose and state payloads ('d') are strings of the Phase 3 codec
- * (mavrruntime_builtin/live/codec); this module does not decode them.
+ * (vrroomruntime_builtin/live/codec); this module does not decode them.
  *
  * Server frames come from the network: parse() accepts only the known frame types with valid
  * shapes, and rebuilds every frame from its known keys.
  *
  * Dependency-free ES module (no imports) so that both grunt (AMD build) and node --test load it.
  *
- * @module     mavrruntime_companion/syncprotocol
+ * @module     vrroomruntime_companion/syncprotocol
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /** WebSocket subprotocol of this protocol version. */
-export const SUBPROTOCOL = 'mavr-sync.1';
+export const SUBPROTOCOL = 'vrroom-sync.1';
 
 /** Largest client frame in bytes (the server closes with 1009 above it). */
 export const MAX_FRAME = 4096;
@@ -105,7 +105,7 @@ const isInt = (value, min, max) => Number.isInteger(value) && value >= min && va
 
 /**
  * Whether a value is a display name: a string of 1..100 code points, none below U+0020 (the rule
- * mavr-sync applies to the token's name claim).
+ * vrroom-sync applies to the token's name claim).
  *
  * @param {*} value
  * @returns {boolean}

@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\admin;
+namespace vrroomruntime_companion\admin;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 
-use mavrruntime_companion\local\config;
+use vrroomruntime_companion\local\config;
 
 /**
  * A secret setting (unmaskable password): empty, or at least 32 characters without spaces.
  *
  * The config log masks the value (admin_setting_configpasswordunmask::add_to_config_log()).
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,7 @@ class setting_secret extends \admin_setting_configpasswordunmask {
     /**
      * Constructor.
      *
-     * @param string $name Setting name, 'mavrruntime_companion/<name>'.
+     * @param string $name Setting name, 'vrroomruntime_companion/<name>'.
      * @param \lang_string|string $visiblename Label.
      * @param \lang_string|string $description Description.
      */

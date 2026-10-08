@@ -37,7 +37,7 @@ ESBUILD_VERSION="0.28.2"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="$(cd "${SCRIPT_DIR}/.." && pwd)/amd/src/livekit.js"
 
-WORK="$(mktemp -d "${TMPDIR:-/tmp}/mavr-livekit-build.XXXXXX")"
+WORK="$(mktemp -d "${TMPDIR:-/tmp}/vrroom-livekit-build.XXXXXX")"
 cleanup() {
     rm -rf "${WORK}"
 }

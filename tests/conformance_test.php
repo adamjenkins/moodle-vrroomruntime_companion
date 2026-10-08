@@ -14,30 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion;
+namespace vrroomruntime_companion;
 
 /**
  * Run-mode conformance test for the companion service run mode.
  *
- * The scripted reference session lives in the abstract test case of mod_mavr. The companion
+ * The scripted reference session lives in the abstract test case of mod_vrroom. The companion
  * address and the shared secret are set first, so the run mode is ready (no network is used:
  * readiness only checks the settings).
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @category   test
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(runtime::class)]
-final class conformance_test extends \mod_mavr\tests\runtime_conformance_testcase {
+final class conformance_test extends \mod_vrroom\tests\runtime_conformance_testcase {
     /**
      * Configure the companion service.
      */
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
-        set_config('url', 'https://companion.example.org', 'mavrruntime_companion');
-        set_config('secret', 'companion-shared-secret-0123456789abcdef', 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org', 'vrroomruntime_companion');
+        set_config('secret', 'companion-shared-secret-0123456789abcdef', 'vrroomruntime_companion');
     }
 
     /**
@@ -55,6 +55,6 @@ final class conformance_test extends \mod_mavr\tests\runtime_conformance_testcas
      * @return void
      */
     public function test_registry_resolves_runtime(): void {
-        $this->assertInstanceOf(runtime::class, \mod_mavr\local\runtime\registry::get($this->get_runtime_name()));
+        $this->assertInstanceOf(runtime::class, \mod_vrroom\local\runtime\registry::get($this->get_runtime_name()));
     }
 }

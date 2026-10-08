@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\privacy;
+namespace vrroomruntime_companion\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
@@ -23,16 +23,16 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\userlist;
 
 /**
- * Privacy provider for the MAVR companion service run mode.
+ * Privacy provider for the VR room companion service run mode.
  *
  * Nothing is stored in Moodle: this plugin has no tables, and its tokens are made on request and
- * not kept. In a live room the user's browser connects to the companion service (mavr-sync) and,
+ * not kept. In a live room the user's browser connects to the companion service (vrroom-sync) and,
  * for voice, to the LiveKit server of the companion stack. They receive a pseudonymous peer id,
  * the user's full name, IP address, pose and state or voice, keep them in memory only while the
  * user is in the room, and pass name, pose and voice on to the other participants. These are
  * described as external locations; the request methods have nothing to export or delete.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +47,7 @@ class provider implements
      * @return collection
      */
     public static function get_metadata(collection $collection): collection {
-        $collection->add_external_location_link('mavrcompanion', [
+        $collection->add_external_location_link('vrroomcompanion', [
             'peerid' => 'privacy:metadata:companion:peerid',
             'fullname' => 'privacy:metadata:companion:fullname',
             'ipaddress' => 'privacy:metadata:companion:ipaddress',

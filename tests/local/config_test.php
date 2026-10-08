@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\local;
+namespace vrroomruntime_companion\local;
 
 /**
  * Tests for the settings, derived addresses and pseudonyms of the companion run mode.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @category   test
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,7 +41,7 @@ final class config_test extends \advanced_testcase {
             'http' => ['http://companion.example.org'],
             'trailing slash' => ['https://companion.example.org/'],
             'port' => ['https://companion.example.org:8443'],
-            'path' => ['https://example.org/mavr-companion'],
+            'path' => ['https://example.org/vrroom-companion'],
             'path and port' => ['http://192.0.2.10:8090/prefix/sub'],
             'ipv4' => ['http://127.0.0.1:8090'],
             'ipv6' => ['http://[::1]:8090'],
@@ -90,14 +90,14 @@ final class config_test extends \advanced_testcase {
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('invalid_base_url_provider')]
     public function test_validate_base_url_invalid(string $url): void {
-        $this->assertSame(get_string('errorinvalidurl', 'mavrruntime_companion'), config::validate_base_url($url));
+        $this->assertSame(get_string('errorinvalidurl', 'vrroomruntime_companion'), config::validate_base_url($url));
     }
 
     /**
      * LiveKit addresses: wss or ws, no path.
      */
     public function test_validate_livekit_url(): void {
-        $error = get_string('errorinvalidlivekiturl', 'mavrruntime_companion');
+        $error = get_string('errorinvalidlivekiturl', 'vrroomruntime_companion');
         $this->assertTrue(config::validate_livekit_url(''));
         $this->assertTrue(config::validate_livekit_url('wss://livekit.example.org'));
         $this->assertTrue(config::validate_livekit_url('wss://livekit.example.org/'));
@@ -117,31 +117,31 @@ final class config_test extends \advanced_testcase {
         $this->assertSame('', config::sync_url());
         $this->assertSame('', config::server_url());
 
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
-        set_config('url', 'https://companion.example.org/', 'mavrruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
+        set_config('url', 'https://companion.example.org/', 'vrroomruntime_companion');
         $this->assertSame('https://companion.example.org', config::base_url());
         $this->assertSame('wss://companion.example.org/sync', config::sync_url());
         $this->assertSame('https://companion.example.org', config::server_url());
 
-        set_config('url', 'http://example.org:8080/mavr/', 'mavrruntime_companion');
-        $this->assertSame('ws://example.org:8080/mavr/sync', config::sync_url());
+        set_config('url', 'http://example.org:8080/vrroom/', 'vrroomruntime_companion');
+        $this->assertSame('ws://example.org:8080/vrroom/sync', config::sync_url());
 
         // The server address is used when valid, else the browser address.
-        set_config('serverurl', 'http://127.0.0.1:8090', 'mavrruntime_companion');
+        set_config('serverurl', 'http://127.0.0.1:8090', 'vrroomruntime_companion');
         $this->assertSame('http://127.0.0.1:8090', config::server_url());
-        set_config('serverurl', 'ftp://nonsense', 'mavrruntime_companion');
-        $this->assertSame('http://example.org:8080/mavr', config::server_url());
+        set_config('serverurl', 'ftp://nonsense', 'vrroomruntime_companion');
+        $this->assertSame('http://example.org:8080/vrroom', config::server_url());
 
         // An invalid stored address counts as not set.
-        set_config('url', 'https://companion.example.org/?x=1', 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org/?x=1', 'vrroomruntime_companion');
         $this->assertSame('', config::base_url());
         $this->assertSame('', config::sync_url());
 
         // LiveKit.
-        set_config('livekiturl', 'wss://livekit.example.org/', 'mavrruntime_companion');
+        set_config('livekiturl', 'wss://livekit.example.org/', 'vrroomruntime_companion');
         $this->assertSame('wss://livekit.example.org', config::livekit_url());
         $this->assertSame('https://livekit.example.org', config::livekit_http_url());
-        set_config('livekiturl', 'ws://127.0.0.1:7880', 'mavrruntime_companion');
+        set_config('livekiturl', 'ws://127.0.0.1:7880', 'vrroomruntime_companion');
         $this->assertSame('http://127.0.0.1:7880', config::livekit_http_url());
     }
 
@@ -154,36 +154,36 @@ final class config_test extends \advanced_testcase {
         $this->assertFalse(config::is_configured());
         $this->assertFalse(config::voice_configured());
 
-        set_config('url', 'https://companion.example.org', 'mavrruntime_companion');
+        set_config('url', 'https://companion.example.org', 'vrroomruntime_companion');
         $this->assertFalse(config::is_configured());
-        set_config('secret', str_repeat('a', 31), 'mavrruntime_companion');
+        set_config('secret', str_repeat('a', 31), 'vrroomruntime_companion');
         $this->assertFalse(config::is_configured());
-        set_config('secret', str_repeat('a', 32), 'mavrruntime_companion');
+        set_config('secret', str_repeat('a', 32), 'vrroomruntime_companion');
         $this->assertTrue(config::is_configured());
-        set_config('secret', '  ' . str_repeat('a', 31) . '  ', 'mavrruntime_companion');
+        set_config('secret', '  ' . str_repeat('a', 31) . '  ', 'vrroomruntime_companion');
         $this->assertFalse(config::is_configured());
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
 
         $this->assertFalse(config::livekit_any());
-        set_config('livekiturl', 'wss://livekit.example.org', 'mavrruntime_companion');
+        set_config('livekiturl', 'wss://livekit.example.org', 'vrroomruntime_companion');
         $this->assertTrue(config::livekit_any());
         $this->assertFalse(config::voice_configured());
-        set_config('livekitkey', 'APIkey123', 'mavrruntime_companion');
+        set_config('livekitkey', 'APIkey123', 'vrroomruntime_companion');
         $this->assertFalse(config::voice_configured());
-        set_config('livekitsecret', str_repeat('b', 31), 'mavrruntime_companion');
+        set_config('livekitsecret', str_repeat('b', 31), 'vrroomruntime_companion');
         $this->assertFalse(config::voice_configured());
-        set_config('livekitsecret', str_repeat('b', 32), 'mavrruntime_companion');
+        set_config('livekitsecret', str_repeat('b', 32), 'vrroomruntime_companion');
         $this->assertTrue(config::livekit_configured());
         $this->assertTrue(config::voice_configured());
 
         // A key with characters an API key cannot have counts as unset.
-        set_config('livekitkey', 'API key', 'mavrruntime_companion');
+        set_config('livekitkey', 'API key', 'vrroomruntime_companion');
         $this->assertSame('', config::livekit_key());
         $this->assertFalse(config::voice_configured());
-        set_config('livekitkey', 'APIkey123', 'mavrruntime_companion');
+        set_config('livekitkey', 'APIkey123', 'vrroomruntime_companion');
 
         // Voice also needs the companion.
-        set_config('url', '', 'mavrruntime_companion');
+        set_config('url', '', 'vrroomruntime_companion');
         $this->assertTrue(config::livekit_configured());
         $this->assertFalse(config::voice_configured());
     }
@@ -194,11 +194,11 @@ final class config_test extends \advanced_testcase {
     public function test_max_users(): void {
         $this->resetAfterTest();
         $this->assertSame(50, config::max_users());
-        set_config('maxusers', 10, 'mavrruntime_companion');
+        set_config('maxusers', 10, 'vrroomruntime_companion');
         $this->assertSame(10, config::max_users());
-        set_config('maxusers', 1, 'mavrruntime_companion');
+        set_config('maxusers', 1, 'vrroomruntime_companion');
         $this->assertSame(2, config::max_users());
-        set_config('maxusers', 500, 'mavrruntime_companion');
+        set_config('maxusers', 500, 'vrroomruntime_companion');
         $this->assertSame(50, config::max_users());
     }
 
@@ -216,10 +216,10 @@ final class config_test extends \advanced_testcase {
      */
     public function test_salt_created_once(): void {
         $this->resetAfterTest();
-        $this->assertFalse(get_config('mavrruntime_companion', config::SALT_NAME));
+        $this->assertFalse(get_config('vrroomruntime_companion', config::SALT_NAME));
         $salt = config::salt();
         $this->assertSame(64, strlen($salt));
-        $this->assertSame($salt, get_config('mavrruntime_companion', config::SALT_NAME));
+        $this->assertSame($salt, get_config('vrroomruntime_companion', config::SALT_NAME));
         $this->assertSame($salt, config::salt());
     }
 
@@ -245,13 +245,13 @@ final class config_test extends \advanced_testcase {
         $this->assertNotSame(substr(config::room_id(5, 7), 1), config::peer_id(5, 7));
 
         // The shared secret plays no part.
-        set_config('secret', self::SECRET, 'mavrruntime_companion');
+        set_config('secret', self::SECRET, 'vrroomruntime_companion');
         $this->assertSame($peer, config::peer_id(5, 7));
-        set_config('secret', strrev(self::SECRET), 'mavrruntime_companion');
+        set_config('secret', strrev(self::SECRET), 'vrroomruntime_companion');
         $this->assertSame($room, config::room_id(7, 0));
 
         // A new salt gives new ids.
-        set_config(config::SALT_NAME, str_repeat('z', 64), 'mavrruntime_companion');
+        set_config(config::SALT_NAME, str_repeat('z', 64), 'vrroomruntime_companion');
         $this->assertNotSame($peer, config::peer_id(5, 7));
     }
 }

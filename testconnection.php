@@ -20,18 +20,18 @@
  * The server-side checks run only on a POST with the session key. Addresses are shown; secrets
  * and tokens never are.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mavrruntime_companion\local\config;
-use mavrruntime_companion\local\connection_tester;
+use vrroomruntime_companion\local\config;
+use vrroomruntime_companion\local\connection_tester;
 
 require_once(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-admin_externalpage_setup('mavrruntimecompaniontest');
+admin_externalpage_setup('vrroomruntimecompaniontest');
 
 $component = config::COMPONENT;
 $results = null;
@@ -88,15 +88,15 @@ if ($results !== null) {
 // The browser check (only with an address to connect to).
 $syncurl = config::sync_url();
 if ($syncurl !== '') {
-    echo html_writer::start_div('mt-4', ['id' => 'mavr-companion-browsertest']);
+    echo html_writer::start_div('mt-4', ['id' => 'vrroom-companion-browsertest']);
     echo html_writer::tag(
         'button',
         s(get_string('testbrowser', $component)),
-        ['type' => 'button', 'class' => 'btn btn-secondary', 'data-action' => 'mavr-companion-browsertest']
+        ['type' => 'button', 'class' => 'btn btn-secondary', 'data-action' => 'vrroom-companion-browsertest']
     );
-    echo html_writer::tag('p', '', ['role' => 'status', 'class' => 'mt-2', 'data-region' => 'mavr-companion-browserstatus']);
+    echo html_writer::tag('p', '', ['role' => 'status', 'class' => 'mt-2', 'data-region' => 'vrroom-companion-browserstatus']);
     echo html_writer::end_div();
-    $PAGE->requires->js_call_amd('mavrruntime_companion/testconnection', 'init', ['mavr-companion-browsertest', $syncurl]);
+    $PAGE->requires->js_call_amd('vrroomruntime_companion/testconnection', 'init', ['vrroom-companion-browsertest', $syncurl]);
 }
 
 echo $OUTPUT->footer();

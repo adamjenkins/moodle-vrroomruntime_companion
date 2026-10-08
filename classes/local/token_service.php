@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\local;
+namespace vrroomruntime_companion\local;
 
 use Firebase\JWT\JWT;
 
@@ -22,19 +22,19 @@ use Firebase\JWT\JWT;
  * Short-lived tokens for the companion service and the LiveKit server.
  *
  * All tokens are HS256 JWTs made with core's Firebase php-jwt. Sync tokens are signed with the
- * shared secret and checked by mavr-sync; LiveKit tokens are signed with the LiveKit API secret in
+ * shared secret and checked by vrroom-sync; LiveKit tokens are signed with the LiveKit API secret in
  * the format of livekit-server-sdk's AccessToken (claims and video grant mirrored from its
  * src/AccessToken.ts and src/grants.ts, Apache-2.0; no LiveKit code is copied). No secret ever
  * leaves this server: only the signed tokens do.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2024 LiveKit, Inc.
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class token_service {
     /** @var string Audience of sync tokens. */
-    public const AUDIENCE = 'mavr-sync';
+    public const AUDIENCE = 'vrroom-sync';
 
     /** @var string Purpose of a token that joins a room. */
     public const PURPOSE_JOIN = 'join';
@@ -121,7 +121,7 @@ final class token_service {
             'iat' => $now,
             'nbf' => $now,
             'exp' => $expires,
-            'mavr' => self::PURPOSE_JOIN,
+            'vrroom' => self::PURPOSE_JOIN,
             'v' => self::VERSION,
         ];
         return ['token' => JWT::encode($payload, config::secret(), self::ALG), 'expires' => $expires];
@@ -141,7 +141,7 @@ final class token_service {
         $payload = [
             'iss' => config::issuer(),
             'aud' => self::AUDIENCE,
-            'mavr' => self::PURPOSE_TEST,
+            'vrroom' => self::PURPOSE_TEST,
             'v' => self::VERSION,
             'nonce' => $nonce,
             'iat' => $now,
@@ -221,7 +221,7 @@ final class token_service {
      */
     public static function challenge_mac(string $nonce, string $issuer, int $ts): string {
         self::require_configured();
-        return hash_hmac('sha256', "mavr-sync/challenge/1\n{$nonce}\n{$issuer}\n{$ts}", config::secret());
+        return hash_hmac('sha256', "vrroom-sync/challenge/1\n{$nonce}\n{$issuer}\n{$ts}", config::secret());
     }
 
     /**

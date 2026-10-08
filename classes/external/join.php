@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mavrruntime_companion\external;
+namespace vrroomruntime_companion\external;
 
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
-use mavrruntime_builtin\local\live\access as builtin_access;
-use mavrruntime_companion\local\access;
-use mavrruntime_companion\local\config;
-use mavrruntime_companion\local\token_service;
+use vrroomruntime_builtin\local\live\access as builtin_access;
+use vrroomruntime_companion\local\access;
+use vrroomruntime_companion\local\config;
+use vrroomruntime_companion\local\token_service;
 
 /**
  * Get the short-lived tokens to join (or stay in) the companion live room of an activity.
  *
  * Every call re-runs the checks of the built-in live_join (own attempt in progress or preview
- * with mod/mavr:manage, group membership), so a client that refreshes its token every four
+ * with mod/vrroom:manage, group membership), so a client that refreshes its token every four
  * minutes loses the room within five minutes of losing access. Nothing is written, except the
  * pseudonym salt on the site's first call.
  *
- * @package    mavrruntime_companion
+ * @package    vrroomruntime_companion
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -73,20 +73,20 @@ class join extends external_api {
             ['cmid' => $cmid, 'attemptid' => $attemptid, 'groupid' => $groupid, 'refresh' => $refresh]
         );
 
-        [$cm, $context, $mavr] = builtin_access::load_by_cmid((int)$params['cmid']);
+        [$cm, $context, $vrroom] = builtin_access::load_by_cmid((int)$params['cmid']);
         self::validate_context($context);
-        require_capability('mod/mavr:view', $context);
-        if (!access::is_available($mavr)) {
+        require_capability('mod/vrroom:view', $context);
+        if (!access::is_available($vrroom)) {
             throw new \moodle_exception('errorlivedisabled', config::COMPONENT);
         }
 
         $userid = (int)$USER->id;
-        $joined = access::check_join($cm, $context, $mavr, (int)$params['attemptid'], $userid, (int)$params['groupid']);
+        $joined = access::check_join($cm, $context, $vrroom, (int)$params['attemptid'], $userid, (int)$params['groupid']);
         $room = (int)$joined['groupid'];
-        $peerid = config::peer_id($userid, (int)$mavr->id);
-        $roomid = config::room_id((int)$mavr->id, $room);
+        $peerid = config::peer_id($userid, (int)$vrroom->id);
+        $roomid = config::room_id((int)$vrroom->id, $room);
         $name = token_service::display_name($USER);
-        $max = access::max_peers($mavr);
+        $max = access::max_peers($vrroom);
         $sync = token_service::sync_token($peerid, $roomid, $name, $joined['kind'], $max);
 
         $voice = ['available' => false, 'url' => '', 'token' => '', 'expires' => 0];
@@ -103,7 +103,7 @@ class join extends external_api {
         return [
             'peerid' => $peerid,
             'groupid' => $room,
-            'roomname' => builtin_access::room_name($cm, $context, $mavr, $room),
+            'roomname' => builtin_access::room_name($cm, $context, $vrroom, $room),
             'maxpeers' => $max,
             'selfname' => $name,
             'kind' => $joined['kind'],

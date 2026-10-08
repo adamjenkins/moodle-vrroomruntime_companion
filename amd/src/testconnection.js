@@ -19,7 +19,7 @@
  * Opens the sync address with the protocol's subprotocol and closes it again as soon as it is open
  * (no token is sent, so the server ends the session by itself if the close is lost).
  *
- * @module     mavrruntime_companion/testconnection
+ * @module     vrroomruntime_companion/testconnection
  * @copyright  2026 Adam Jenkins <adam@wisecat.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {getString} from 'core/str';
-import {SUBPROTOCOL, CLOSE} from 'mavrruntime_companion/syncprotocol';
+import {SUBPROTOCOL, CLOSE} from 'vrroomruntime_companion/syncprotocol';
 
 /** Give up after this long (ms). */
 const TIMEOUT = 8000;
@@ -98,11 +98,11 @@ export const init = (rootid, syncurl) => {
         }
         running = true;
         button.disabled = true;
-        const pending = new Pending('mavrruntime_companion/testconnection:check');
-        Promise.resolve(getString('testbrowserrunning', 'mavrruntime_companion')).then((text) => {
+        const pending = new Pending('vrroomruntime_companion/testconnection:check');
+        Promise.resolve(getString('testbrowserrunning', 'vrroomruntime_companion')).then((text) => {
             status.textContent = text;
             return check(syncurl);
-        }).then((ok) => getString(ok ? 'testbrowserok' : 'testbrowserfailed', 'mavrruntime_companion', syncurl))
+        }).then((ok) => getString(ok ? 'testbrowserok' : 'testbrowserfailed', 'vrroomruntime_companion', syncurl))
         .then((text) => {
             status.textContent = text;
             return undefined;
