@@ -48,8 +48,12 @@ class join extends external_api {
             'cmid' => new external_value(PARAM_INT, 'Course module id'),
             'attemptid' => new external_value(PARAM_INT, 'The attempt in progress, 0 for a teacher preview', VALUE_DEFAULT, 0),
             'groupid' => new external_value(PARAM_INT, 'The group whose room to join, 0 for the default room', VALUE_DEFAULT, 0),
-            'refresh' => new external_value(PARAM_BOOL, 'True to renew the room token only (no voice token)', VALUE_DEFAULT,
-                false),
+            'refresh' => new external_value(
+                PARAM_BOOL,
+                'True to renew the room token only (no voice token)',
+                VALUE_DEFAULT,
+                false
+            ),
         ]);
     }
 
@@ -64,8 +68,10 @@ class join extends external_api {
      */
     public static function execute(int $cmid, int $attemptid = 0, int $groupid = 0, bool $refresh = false): array {
         global $USER;
-        $params = self::validate_parameters(self::execute_parameters(),
-            ['cmid' => $cmid, 'attemptid' => $attemptid, 'groupid' => $groupid, 'refresh' => $refresh]);
+        $params = self::validate_parameters(
+            self::execute_parameters(),
+            ['cmid' => $cmid, 'attemptid' => $attemptid, 'groupid' => $groupid, 'refresh' => $refresh]
+        );
 
         [$cm, $context, $mavr] = builtin_access::load_by_cmid((int)$params['cmid']);
         self::validate_context($context);

@@ -305,20 +305,20 @@ export const parse = (data) => {
  * Each entry is [joining, joined] with [action, reason].
  */
 const CLOSE_ACTIONS = {
-    1000: [['fail', 'error'], ['left', '']],
-    1001: [['retry', 'network'], ['retry', 'network']],
-    1006: [['retry', 'network'], ['retry', 'network']],
-    1009: [['fail', 'error'], ['retry', 'network']],
-    4000: [['fail', 'error'], ['retry', 'network']],
-    4001: [['retry', 'network'], ['retry', 'network']],
-    4008: [['fail', 'network'], ['retry', 'network']],
-    4401: [['refresh', 'notallowed'], ['refresh', 'closed']],
-    4403: [['fail', 'notallowed'], ['left', 'closed']],
-    4409: [['left', 'replaced'], ['left', 'replaced']],
-    4410: [['refresh', 'notallowed'], ['refresh', 'closed']],
-    4429: [['fail', 'error'], ['retry', 'network']],
-    4503: [['fail', 'full'], ['left', '']],
-    4504: [['fail', 'busy'], ['retry', 'network']],
+    '1000': [['fail', 'error'], ['left', '']],
+    '1001': [['retry', 'network'], ['retry', 'network']],
+    '1006': [['retry', 'network'], ['retry', 'network']],
+    '1009': [['fail', 'error'], ['retry', 'network']],
+    '4000': [['fail', 'error'], ['retry', 'network']],
+    '4001': [['retry', 'network'], ['retry', 'network']],
+    '4008': [['fail', 'network'], ['retry', 'network']],
+    '4401': [['refresh', 'notallowed'], ['refresh', 'closed']],
+    '4403': [['fail', 'notallowed'], ['left', 'closed']],
+    '4409': [['left', 'replaced'], ['left', 'replaced']],
+    '4410': [['refresh', 'notallowed'], ['refresh', 'closed']],
+    '4429': [['fail', 'error'], ['retry', 'network']],
+    '4503': [['fail', 'full'], ['left', '']],
+    '4504': [['fail', 'busy'], ['retry', 'network']],
 };
 
 /** Action for a code not in the table. */

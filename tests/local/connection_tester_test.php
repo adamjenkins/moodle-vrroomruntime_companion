@@ -145,9 +145,13 @@ final class connection_tester_test extends \advanced_testcase {
 
         $results = $this->run_tester($this->companion(fn() => ['status' => 403, 'body' => '{"error":"forbidden"}',
             'error' => '']));
-        $this->assert_result($results, 'challenge', 'fail',
-            get_string('testdetail_forbidden', 'mavrruntime_companion', config::issuer()));
-        $this->assertStringContainsString(config::issuer(), $this->result($results, 'challenge')['detail']);
+        $this->assert_result(
+            $results,
+            'challenge',
+            'fail',
+            get_string('testdetail_forbidden', 'mavrruntime_companion', config::issuer())
+        );
+        $this->assertStringContainsString(config::issuer(), $this->find_result($results, 'challenge')['detail']);
 
         $results = $this->run_tester($this->companion(fn() => ['status' => 429, 'body' => '', 'error' => '']));
         $this->assert_result($results, 'challenge', 'fail', get_string('testdetail_http', 'mavrruntime_companion', 429));
@@ -160,13 +164,17 @@ final class connection_tester_test extends \advanced_testcase {
         $badmac = get_string('testdetail_badmac', 'mavrruntime_companion');
 
         // Signed with another secret: a stranger's server.
-        $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer($claims,
-            ['secret' => strrev(self::SECRET)])));
+        $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer(
+            $claims,
+            ['secret' => strrev(self::SECRET)]
+        )));
         $this->assert_result($results, 'challenge', 'fail', $badmac);
 
         // Another nonce, correctly signed for it.
-        $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer($claims,
-            ['nonce' => str_repeat('0', 32)])));
+        $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer(
+            $claims,
+            ['nonce' => str_repeat('0', 32)]
+        )));
         $this->assert_result($results, 'challenge', 'fail', $badmac);
 
         // A clock 121 seconds off.
@@ -178,8 +186,10 @@ final class connection_tester_test extends \advanced_testcase {
         $this->assert_result($results, 'challenge', 'ok', '');
 
         // A MAC over another issuer.
-        $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer($claims,
-            ['iss' => 'https://other.example.org'])));
+        $results = $this->run_tester($this->companion(fn(array $claims) => $this->answer(
+            $claims,
+            ['iss' => 'https://other.example.org']
+        )));
         $this->assert_result($results, 'challenge', 'fail', $badmac);
 
         // Missing fields.
@@ -203,7 +213,7 @@ final class connection_tester_test extends \advanced_testcase {
         set_config('livekitsecret', self::LIVEKIT_SECRET, 'mavrruntime_companion');
 
         // LiveKit down.
-        $results = $this->run_tester(function(string $method, string $url, array $headers) use ($companion) {
+        $results = $this->run_tester(function (string $method, string $url, array $headers) use ($companion) {
             if (str_starts_with($url, 'https://livekit.example.org')) {
                 return ['status' => 0, 'body' => '', 'error' => 'timeout'];
             }
@@ -213,7 +223,7 @@ final class connection_tester_test extends \advanced_testcase {
         $this->assert_result($results, 'livekitauth', 'skip', '');
 
         // Key refused.
-        $results = $this->run_tester(function(string $method, string $url, array $headers) use ($companion) {
+        $results = $this->run_tester(function (string $method, string $url, array $headers) use ($companion) {
             if ($url === 'https://livekit.example.org/') {
                 return ['status' => 200, 'body' => 'OK', 'error' => ''];
             }
@@ -227,7 +237,7 @@ final class connection_tester_test extends \advanced_testcase {
 
         // Everything passes.
         $this->requests = [];
-        $results = $this->run_tester(function(string $method, string $url, array $headers) use ($companion) {
+        $results = $this->run_tester(function (string $method, string $url, array $headers) use ($companion) {
             if (str_starts_with($url, 'https://livekit.example.org')) {
                 return ['status' => 200, 'body' => $method === 'POST' ? '{"rooms":[]}' : 'OK', 'error' => ''];
             }
@@ -259,7 +269,7 @@ final class connection_tester_test extends \advanced_testcase {
      */
     private function run_tester(callable $handler): array {
         $test = $this;
-        $client = new class($handler, $test) implements http_client {
+        $client = new class ($handler, $test) implements http_client {
             /**
              * Constructor.
              *
@@ -310,7 +320,7 @@ final class connection_tester_test extends \advanced_testcase {
      * @return callable The handler.
      */
     private function companion(callable $challenge): callable {
-        return function(string $method, string $url, array $headers) use ($challenge): array {
+        return function (string $method, string $url, array $headers) use ($challenge): array {
             if (str_ends_with($url, '/healthz')) {
                 return ['status' => 200, 'body' => self::HEALTHY, 'error' => ''];
             }
@@ -370,7 +380,7 @@ final class connection_tester_test extends \advanced_testcase {
      * @param string $check The check.
      * @return array
      */
-    private function result(array $results, string $check): array {
+    private function find_result(array $results, string $check): array {
         foreach ($results as $result) {
             if ($result['check'] === $check) {
                 return $result;
@@ -388,7 +398,7 @@ final class connection_tester_test extends \advanced_testcase {
      * @param string $detail Expected detail.
      */
     private function assert_result(array $results, string $check, string $status, string $detail): void {
-        $result = $this->result($results, $check);
+        $result = $this->find_result($results, $check);
         $this->assertSame($status, $result['status'], $check . ': ' . $result['detail']);
         $this->assertSame($detail, $result['detail'], $check);
     }

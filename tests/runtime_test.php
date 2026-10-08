@@ -212,8 +212,10 @@ final class runtime_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
-        $record = $this->getDataGenerator()->create_module('mavr',
-            ['course' => $course->id, 'runtime' => 'companion'] + $fields);
+        $record = $this->getDataGenerator()->create_module(
+            'mavr',
+            ['course' => $course->id, 'runtime' => 'companion'] + $fields
+        );
         $cm = get_fast_modinfo($course)->get_cm($record->cmid);
         $mavr = $DB->get_record('mavr', ['id' => $record->id], '*', MUST_EXIST);
         return [$cm, $mavr, $student, $teacher];

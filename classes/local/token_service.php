@@ -99,8 +99,14 @@ final class token_service {
      * @param int|null $now Current time.
      * @return array{token: string, expires: int}
      */
-    public static function sync_token(string $peerid, string $room, string $name, string $kind, int $max,
-            ?int $now = null): array {
+    public static function sync_token(
+        string $peerid,
+        string $room,
+        string $name,
+        string $kind,
+        int $max,
+        ?int $now = null
+    ): array {
         self::require_configured();
         $now = $now ?? time();
         $expires = $now + self::TTL;

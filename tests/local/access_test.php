@@ -190,8 +190,10 @@ final class access_test extends \advanced_testcase {
         $theirs = $this->mavr_generator()->create_attempt((int)$mavr->id, (int)$other->id);
         $elsewhere = $this->mavr_generator()->create_attempt((int)$mavr2->id, (int)$student->id);
 
-        $this->assertSame(['kind' => 'attempt', 'attemptid' => (int)$own->id, 'groupid' => 0],
-            access::check_join($cm, $context, $mavr, (int)$own->id, (int)$student->id, 0));
+        $this->assertSame(
+            ['kind' => 'attempt', 'attemptid' => (int)$own->id, 'groupid' => 0],
+            access::check_join($cm, $context, $mavr, (int)$own->id, (int)$student->id, 0)
+        );
 
         $this->assert_join_refused('errornotyourattempt', $cm, $context, $mavr, (int)$theirs->id, (int)$student->id, 0);
         $this->assert_join_refused('errorlivenotallowed', $cm, $context, $mavr, (int)$elsewhere->id, (int)$student->id, 0);
@@ -208,8 +210,10 @@ final class access_test extends \advanced_testcase {
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        $this->assertSame(['kind' => 'preview', 'attemptid' => 0, 'groupid' => 0],
-            access::check_join($cm, $context, $mavr, 0, (int)$teacher->id, 0));
+        $this->assertSame(
+            ['kind' => 'preview', 'attemptid' => 0, 'groupid' => 0],
+            access::check_join($cm, $context, $mavr, 0, (int)$teacher->id, 0)
+        );
         $this->assert_join_refused('errorlivenotallowed', $cm, $context, $mavr, 0, (int)$student->id, 0);
     }
 
@@ -232,8 +236,15 @@ final class access_test extends \advanced_testcase {
         $this->assertSame((int)$groupa->id, $joined['groupid']);
         $joined = access::check_join($cm, $context, $mavr, (int)$attempt->id, (int)$member->id, (int)$groupa->id);
         $this->assertSame((int)$groupa->id, $joined['groupid']);
-        $this->assert_join_refused('errorlivenoroom', $cm, $context, $mavr, (int)$attempt->id, (int)$member->id,
-            (int)$groupb->id);
+        $this->assert_join_refused(
+            'errorlivenoroom',
+            $cm,
+            $context,
+            $mavr,
+            (int)$attempt->id,
+            (int)$member->id,
+            (int)$groupb->id
+        );
 
         $this->setUser($teacher);
         $joined = access::check_join($cm, $context, $mavr, 0, (int)$teacher->id, (int)$groupb->id);
@@ -255,8 +266,15 @@ final class access_test extends \advanced_testcase {
      * @param int $userid User id.
      * @param int $groupid Requested group.
      */
-    private function assert_join_refused(string $errorcode, \cm_info $cm, \context_module $context, \stdClass $mavr,
-            int $attemptid, int $userid, int $groupid): void {
+    private function assert_join_refused(
+        string $errorcode,
+        \cm_info $cm,
+        \context_module $context,
+        \stdClass $mavr,
+        int $attemptid,
+        int $userid,
+        int $groupid
+    ): void {
         try {
             access::check_join($cm, $context, $mavr, $attemptid, $userid, $groupid);
             $this->fail("check_join() did not refuse with {$errorcode}.");

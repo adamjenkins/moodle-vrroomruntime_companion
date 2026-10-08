@@ -175,8 +175,11 @@ final class token_service_test extends \advanced_testcase {
      */
     public function test_challenge_mac(): void {
         $nonce = str_repeat('ab', 16);
-        $expected = hash_hmac('sha256', "mavr-sync/challenge/1\n" . $nonce . "\nhttps://moodle.example.org\n" . self::NOW,
-            self::SECRET);
+        $expected = hash_hmac(
+            'sha256',
+            "mavr-sync/challenge/1\n" . $nonce . "\nhttps://moodle.example.org\n" . self::NOW,
+            self::SECRET
+        );
         $this->assertSame($expected, token_service::challenge_mac($nonce, 'https://moodle.example.org', self::NOW));
         $this->assertNotSame($expected, token_service::challenge_mac($nonce, 'https://moodle.example.org', self::NOW + 1));
     }

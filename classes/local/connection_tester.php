@@ -106,8 +106,13 @@ final class connection_tester {
      * @return array{check: string, status: string, detail: string}
      */
     private function check_health(): array {
-        $response = $this->client->request('GET', config::server_url() . config::HEALTH_PATH,
-            ['Accept: application/json'], '', self::TIMEOUT);
+        $response = $this->client->request(
+            'GET',
+            config::server_url() . config::HEALTH_PATH,
+            ['Accept: application/json'],
+            '',
+            self::TIMEOUT
+        );
         $problem = $this->transport_problem($response);
         if ($problem !== null) {
             return $this->fail('health', $problem);
@@ -128,8 +133,13 @@ final class connection_tester {
      */
     private function check_challenge(int $now): array {
         $test = token_service::test_token($now);
-        $response = $this->client->request('GET', config::server_url() . config::CHALLENGE_PATH,
-            ['Accept: application/json', 'Authorization: Bearer ' . $test['token']], '', self::TIMEOUT);
+        $response = $this->client->request(
+            'GET',
+            config::server_url() . config::CHALLENGE_PATH,
+            ['Accept: application/json', 'Authorization: Bearer ' . $test['token']],
+            '',
+            self::TIMEOUT
+        );
         if ($response['status'] === 401) {
             return $this->fail('challenge', get_string('testdetail_unauthorised', config::COMPONENT));
         }
@@ -145,8 +155,10 @@ final class connection_tester {
         if ($problem !== null) {
             return $this->fail('challenge', $problem);
         }
-        if (!isset($data['nonce'], $data['ts'], $data['mac']) || !is_string($data['nonce']) || !is_int($data['ts'])
-                || !is_string($data['mac'])) {
+        if (
+            !isset($data['nonce'], $data['ts'], $data['mac']) || !is_string($data['nonce']) || !is_int($data['ts'])
+                || !is_string($data['mac'])
+        ) {
             return $this->fail('challenge', get_string('testdetail_invalid', config::COMPONENT));
         }
         if (!hash_equals($test['nonce'], $data['nonce'])) {
@@ -181,8 +193,13 @@ final class connection_tester {
      */
     private function check_livekit_auth(int $now): array {
         $token = token_service::livekit_admin_token(['roomList' => true], $now);
-        $response = $this->client->request('POST', config::livekit_http_url() . '/twirp/livekit.RoomService/ListRooms',
-            ['Content-Type: application/json', 'Authorization: Bearer ' . $token], '{}', self::TIMEOUT);
+        $response = $this->client->request(
+            'POST',
+            config::livekit_http_url() . '/twirp/livekit.RoomService/ListRooms',
+            ['Content-Type: application/json', 'Authorization: Bearer ' . $token],
+            '{}',
+            self::TIMEOUT
+        );
         if ($response['status'] === 401 || $response['status'] === 403) {
             return $this->fail('livekitauth', get_string('testdetail_unauthorised', config::COMPONENT));
         }

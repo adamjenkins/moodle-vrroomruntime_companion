@@ -58,8 +58,11 @@ echo html_writer::end_tag('dl');
 // The server-side test.
 echo html_writer::start_tag('form', ['method' => 'post', 'action' => $PAGE->url->out(false), 'class' => 'mb-3']);
 echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
-echo html_writer::tag('button', s(get_string('testrun', $component)),
-    ['type' => 'submit', 'name' => 'runtest', 'value' => '1', 'class' => 'btn btn-primary']);
+echo html_writer::tag(
+    'button',
+    s(get_string('testrun', $component)),
+    ['type' => 'submit', 'name' => 'runtest', 'value' => '1', 'class' => 'btn btn-primary']
+);
 echo html_writer::end_tag('form');
 
 if ($results !== null) {
@@ -86,8 +89,11 @@ if ($results !== null) {
 $syncurl = config::sync_url();
 if ($syncurl !== '') {
     echo html_writer::start_div('mt-4', ['id' => 'mavr-companion-browsertest']);
-    echo html_writer::tag('button', s(get_string('testbrowser', $component)),
-        ['type' => 'button', 'class' => 'btn btn-secondary', 'data-action' => 'mavr-companion-browsertest']);
+    echo html_writer::tag(
+        'button',
+        s(get_string('testbrowser', $component)),
+        ['type' => 'button', 'class' => 'btn btn-secondary', 'data-action' => 'mavr-companion-browsertest']
+    );
     echo html_writer::tag('p', '', ['role' => 'status', 'class' => 'mt-2', 'data-region' => 'mavr-companion-browserstatus']);
     echo html_writer::end_div();
     $PAGE->requires->js_call_amd('mavrruntime_companion/testconnection', 'init', ['mavr-companion-browsertest', $syncurl]);

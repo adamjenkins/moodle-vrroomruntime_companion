@@ -186,6 +186,32 @@ const defaultCall = (args, nosessionupdate) => Promise.resolve(
 );
 
 /**
+ * Normalise the voice block of a join service result.
+ *
+ * @param {*} value The voice block.
+ * @returns {{available: boolean, url: string, token: string, expires: number}}
+ */
+const normaliseVoice = (value) => {
+    const voice = value && typeof value === 'object' ? value : {};
+    const url = typeof voice.url === 'string' && /^wss?:\/\//.test(voice.url) ? voice.url : '';
+    return {
+        available: !!voice.available && url !== '',
+        url: url,
+        token: typeof voice.token === 'string' ? voice.token : '',
+        expires: Number(voice.expires) || 0,
+    };
+};
+
+/**
+ * Disconnect a LiveKit room, ignoring any failure.
+ *
+ * @param {Object} room The LiveKit room.
+ */
+const disconnectQuietly = (room) => {
+    Promise.resolve().then(() => room.disconnect(false)).catch(() => undefined);
+};
+
+/**
  * Check and normalise a join service result.
  *
  * @param {*} result The result.
@@ -199,9 +225,6 @@ const normaliseResult = (result) => {
             || typeof result.token !== 'string' || result.token === '') {
         return null;
     }
-    const voice = result.voice && typeof result.voice === 'object' ? result.voice : {};
-    const voiceurl = typeof voice.url === 'string' && /^wss?:\/\//.test(voice.url) ? voice.url : '';
-    const voicetoken = typeof voice.token === 'string' ? voice.token : '';
     return {
         peerid: result.peerid,
         groupid: Number(result.groupid) || 0,
@@ -213,12 +236,7 @@ const normaliseResult = (result) => {
         token: result.token,
         expires: Number(result.expires) || 0,
         refreshafter: Number(result.refreshafter) || 0,
-        voice: {
-            available: !!voice.available && voiceurl !== '',
-            url: voiceurl,
-            token: voicetoken,
-            expires: Number(voice.expires) || 0,
-        },
+        voice: normaliseVoice(result.voice),
     };
 };
 
@@ -508,26 +526,46 @@ class CompanionTransport extends Transport {
                 if (retried) {
                     throw joinError('network');
                 }
-                return this.wait(Proto.backoff(0)).then(() => this.connectWhileJoining(true, refreshed));
+                return this.retryWhileJoining(refreshed);
             }
             if (action.action === 'refresh') {
                 if (refreshed) {
                     throw joinError(action.reason);
                 }
-                return this.fetchJoin(true).then((result) => {
-                    if (this.state !== 'joining') {
-                        throw joinError('closed');
-                    }
-                    this.applyResult(result, true);
-                    return this.connectWhileJoining(retried, true);
-                }, (error) => {
-                    throw joinError(isNetworkError(error) ? 'network' : reasonFor(error), error);
-                });
+                return this.refreshWhileJoining(retried);
             }
             if (action.action === 'left') {
                 throw joinError(action.reason || 'closed');
             }
             throw joinError(action.reason || 'error');
+        });
+    }
+
+    /**
+     * Wait the first backoff, then open the socket again while joining (the one retry).
+     *
+     * @param {boolean} refreshed Whether a refresh was already made.
+     * @returns {Promise<Object>} The welcome frame; rejects with a join error.
+     */
+    retryWhileJoining(refreshed) {
+        return this.wait(Proto.backoff(0)).then(() => this.connectWhileJoining(true, refreshed));
+    }
+
+    /**
+     * Fetch a fresh token, then open the socket again while joining (the one refresh).
+     *
+     * @param {boolean} retried Whether a retry was already made.
+     * @returns {Promise<Object>} The welcome frame; rejects with a join error.
+     */
+    refreshWhileJoining(retried) {
+        return this.fetchJoin(true).then((result) => {
+            if (this.state !== 'joining') {
+                throw joinError('closed');
+            }
+            this.applyResult(result, true);
+            return this.connectWhileJoining(retried, true);
+        }, (error) => {
+            throw joinError(isNetworkError(error) ? 'network' : reasonFor(error), error);
         });
     }
 
@@ -1133,7 +1171,7 @@ class CompanionTransport extends Transport {
             Log.debug(error);
             if (this.lkroom === room) {
                 this.forgetVoiceRoom();
-                Promise.resolve().then(() => room.disconnect(false)).catch(() => undefined);
+                disconnectQuietly(room);
                 this.scheduleVoiceRetry();
             }
         });
@@ -1307,13 +1345,7 @@ class CompanionTransport extends Transport {
                 if (this.lkroom !== room || this.localtrack !== want) {
                     return undefined;
                 }
-                return room.localParticipant.publishTrack(want, {source: Track.Source.Microphone, name: 'microphone'})
-                    .then(() => {
-                        if (this.lkroom === room) {
-                            this.publishedtrack = want;
-                        }
-                        return undefined;
-                    });
+                return this.publishMicrophone(room, want);
             });
         }
         return chain.then(() => {
@@ -1323,6 +1355,23 @@ class CompanionTransport extends Transport {
             }
             return undefined;
         });
+    }
+
+    /**
+     * Publish the microphone track to the voice room.
+     *
+     * @param {Object} room The LiveKit room.
+     * @param {MediaStreamTrack} want The local track.
+     * @returns {Promise<void>}
+     */
+    publishMicrophone(room, want) {
+        return room.localParticipant.publishTrack(want, {source: Track.Source.Microphone, name: 'microphone'})
+            .then(() => {
+                if (this.lkroom === room) {
+                    this.publishedtrack = want;
+                }
+                return undefined;
+            });
     }
 
     // The transport interface.

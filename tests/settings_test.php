@@ -92,8 +92,10 @@ final class settings_test extends \advanced_testcase {
 
         $livekit = new setting_baseurl('mavrruntime_companion/livekiturl', 'LiveKit', '', setting_baseurl::KIND_LIVEKIT);
         $this->assertTrue($livekit->validate('wss://livekit.example.org'));
-        $this->assertSame(get_string('errorinvalidlivekiturl', 'mavrruntime_companion'),
-            $livekit->validate('https://livekit.example.org'));
+        $this->assertSame(
+            get_string('errorinvalidlivekiturl', 'mavrruntime_companion'),
+            $livekit->validate('https://livekit.example.org')
+        );
 
         $this->expectException(\coding_exception::class);
         new setting_baseurl('mavrruntime_companion/other', 'Other', '', 'nonsense');

@@ -76,8 +76,14 @@ final class access {
      * @return array{kind: string, attemptid: int, groupid: int}
      * @throws \moodle_exception errorlivenotallowed, errorlivenoroom, or mod_mavr's attempt errors
      */
-    public static function check_join(\cm_info $cm, \context_module $context, \stdClass $mavr, int $attemptid,
-            int $userid, int $requestedgroup): array {
+    public static function check_join(
+        \cm_info $cm,
+        \context_module $context,
+        \stdClass $mavr,
+        int $attemptid,
+        int $userid,
+        int $requestedgroup
+    ): array {
         $kind = builtin_access::resolve_kind($cm, $context, $mavr, $attemptid, $userid);
         $groupid = builtin_access::resolve_group($cm, $context, $userid, $requestedgroup);
         return ['kind' => $kind['kind'], 'attemptid' => (int)$kind['attemptid'], 'groupid' => $groupid];
@@ -93,8 +99,13 @@ final class access {
      * @param \stdClass $user The user launching.
      * @return array
      */
-    public static function launch_block(\cm_info $cm, \context_module $context, \stdClass $mavr, ?\stdClass $attempt,
-            \stdClass $user): array {
+    public static function launch_block(
+        \cm_info $cm,
+        \context_module $context,
+        \stdClass $mavr,
+        ?\stdClass $attempt,
+        \stdClass $user
+    ): array {
         $block = [
             'available' => false,
             'canjoin' => false,

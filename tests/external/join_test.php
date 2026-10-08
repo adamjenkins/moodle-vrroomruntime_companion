@@ -79,8 +79,10 @@ final class join_test extends \advanced_testcase {
         $this->assertTrue($result['voice']['available']);
         $this->assertSame('wss://livekit.example.org', $result['voice']['url']);
         $this->assertGreaterThanOrEqual($before + 300, $result['voice']['expires']);
-        $voice = json_decode(json_encode(JWT::decode($result['voice']['token'], new Key(self::LIVEKIT_SECRET, 'HS256'))),
-            true);
+        $voice = json_decode(
+            json_encode(JWT::decode($result['voice']['token'], new Key(self::LIVEKIT_SECRET, 'HS256'))),
+            true
+        );
         $this->assertSame($result['peerid'], $voice['sub']);
         $this->assertSame($claims['room'], $voice['video']['room']);
         $this->assertSame(['microphone'], $voice['video']['canPublishSources']);
