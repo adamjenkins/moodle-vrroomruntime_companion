@@ -77,15 +77,19 @@ jobs:
       # built-in run mode vrroomruntime_builtin, which mod_vrroom bundles. moodle-plugin-ci installs
       # mod_vrroom first (a sub-plugin's parent is an implied dependency), then this plugin into it.
       # The mod_vrroom repository is private for now: set the repository secret MOD_VRROOM_TOKEN to a
-      # token that can read it. Without the secret the public URL is used, which works once
-      # mod_vrroom is public.
+      # fine-grained token that can read it (Contents: read-only). Without the secret the public URL is
+      # used, which works once mod_vrroom is public. The token goes into an HTTP header for git (as
+      # actions/checkout does), never into a clone URL: moodle-plugin-ci prints a failed command
+      # wrapped across lines, which defeats the log masking of secrets.
       - name: Add mod_vrroom
         run: |
           if [ -n "$MOD_VRROOM_TOKEN" ]; then
-            moodle-plugin-ci add-plugin --clone "https://x-access-token:${MOD_VRROOM_TOKEN}@github.com/adamjenkins/moodle-mod_vrroom.git"
-          else
-            moodle-plugin-ci add-plugin adamjenkins/moodle-mod_vrroom
+            auth=$(printf 'x-access-token:%s' "$MOD_VRROOM_TOKEN" | base64 -w0)
+            echo "::add-mask::$auth"
+            git config --global http.https://github.com/adamjenkins/moodle-mod_vrroom.git/.extraheader "AUTHORIZATION: basic $auth"
           fi
+          moodle-plugin-ci add-plugin adamjenkins/moodle-mod_vrroom
+          git config --global --unset-all http.https://github.com/adamjenkins/moodle-mod_vrroom.git/.extraheader || true
         env:
           MOD_VRROOM_TOKEN: ${{ secrets.MOD_VRROOM_TOKEN }}
 
