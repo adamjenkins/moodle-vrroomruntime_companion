@@ -13,7 +13,7 @@ service stores nothing and grades nothing.
 
 ## Requirements
 
-- Moodle 5.2 (`$plugin->supported = [502, 502]`).
+- Moodle 5.2 or 5.3 (`$plugin->supported = [502, 503]`).
 - `mod_vrroom` and its built-in run mode `vrroomruntime_builtin`, version 2026100800 or later.
 - The **vrroom-companion** stack (separate repository): the `vrroom-sync` room service and, for voice,
   a LiveKit server. Its README explains the installation with rootless Podman (Quadlet units or

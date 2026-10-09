@@ -3,7 +3,7 @@
 All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.1.0] - Unreleased
 
 ### Added
 
@@ -23,3 +23,9 @@ All notable changes to this plugin are documented here. The format follows
   the wire-protocol module `syncprotocol`, and the vendored `livekit-client` bundle.
 - Privacy metadata: the companion service, the LiveKit server and the other participants as
   external locations. No tables.
+- GitHub Actions workflow (Moodle 5.3; PHP 8.3 + MariaDB 11.4, PHP 8.4 + PostgreSQL 17), installing
+  `mod_vrroom` first.
+
+### Changed
+
+- `$plugin->supported` widened to `[502, 503]`.
