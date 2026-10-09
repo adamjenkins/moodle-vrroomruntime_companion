@@ -164,15 +164,25 @@ jobs:
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci mustache
 
-      - name: Grunt
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci grunt --max-lint-warnings 0
-
       - name: Setup Node (Moodle 5.3's .nvmrc is lts/jod, Node 22)
         if: ${{ !cancelled() }}
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      # moodle-plugin-ci grunt passes every amd/src file to ESLint by name, so the vendored LiveKit
+      # bundle (amd/src/livekit.js, declared in thirdpartylibs.xml) draws an "ignored file" warning
+      # and fails --max-lint-warnings 0. Lint the directory instead (ESLint then skips the bundle
+      # silently once ignorefiles has written the thirdpartylibs.xml entries to .eslintignore), rebuild
+      # with this branch's toolchain and fail if the committed amd/build differs.
+      - name: Grunt
+        if: ${{ !cancelled() }}
+        working-directory: moodle
+        run: |
+          npx grunt ignorefiles
+          npx eslint --max-warnings 0 public/mod/vrroom/runtime/companion/amd/src
+          npx grunt rollup --root=public/mod/vrroom/runtime/companion
+          diff -r ../plugin/amd/build public/mod/vrroom/runtime/companion/amd/build
 
       # The client side of the companion wire protocol (amd/src/syncprotocol.js).
       - name: JavaScript tests
