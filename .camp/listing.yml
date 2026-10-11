@@ -1,0 +1,28 @@
+# camp listing manifest: descriptive content for the plugin's page.
+# camp ingests this file at each tagged release.
+# Schema: https://camp-registry.org/schema/listing.schema.json
+name: VR room companion service
+summary: A VR room run mode that sends live rooms through a self-hosted companion service, for up to 50 people with voice.
+description: |
+  A run mode for the VR room activity that keeps the built-in 3D viewer but
+  sends live rooms through the vrroom-companion container stack. With it, up
+  to 50 people can meet in a live room, see each other as avatars and talk,
+  and their browsers connect to the companion service and its voice server
+  instead of directly to each other, so participants no longer see each
+  other's IP addresses.
+
+  Moodle signs short-lived room tokens after the same access checks as the
+  built-in live mode, and names people and rooms by pseudonyms only. The
+  companion service stores nothing and grades nothing.
+
+  Needs the vrroom-companion stack (the vrroom-sync service and, for voice,
+  a LiveKit server), which you host yourself; both are free software.
+  Requires VR room (mod_vrroom). Moodle 5.2 and 5.3. ALPHA.
+labels:
+  # Disclosure labels (RFC §4.7):
+  #   fully-free | freemium | paid-service | external-account
+  #   donation-supported | commercial-support-available
+  #   requires-core-patch (needs modifications to Moodle core to work)
+  - fully-free
+links:
+  issues: https://github.com/adamjenkins/moodle-vrroomruntime_companion/issues

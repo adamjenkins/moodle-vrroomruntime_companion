@@ -3,10 +3,12 @@
 All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-10-11
 
 ### Added
 
+- camp registry listing (`.camp/listing.yml`) and release workflow
+  (`.github/workflows/camp-release.yml`).
 - Run mode `vrroomruntime_companion` (*Companion service*) for `mod_vrroom`: the built-in viewer with
   live rooms of up to 50 people through the vrroom-companion stack (`vrroom-sync` WebSocket service
   for presence, poses and states; LiveKit for voice).

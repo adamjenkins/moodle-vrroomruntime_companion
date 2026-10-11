@@ -1,6 +1,6 @@
 # Changes
 
-## 0.1.0 (not yet tagged) — ALPHA
+## 0.1.0 (2026-10-11) — ALPHA
 
 - First version (Phase 4): the **Companion service** run mode for VR room. It uses the built-in
   viewer, but live rooms go through the vrroom-companion stack: up to 50 people per room, positions
