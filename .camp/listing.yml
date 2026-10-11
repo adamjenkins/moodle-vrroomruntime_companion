@@ -24,5 +24,8 @@ labels:
   #   donation-supported | commercial-support-available
   #   requires-core-patch (needs modifications to Moodle core to work)
   - fully-free
+screenshots:
+  - path: .camp/screenshots/01-settings.jpg
+    caption: 'Site settings: the companion service address, shared secret, room size and LiveKit voice server.'
 links:
   issues: https://github.com/adamjenkins/moodle-vrroomruntime_companion/issues
