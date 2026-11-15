@@ -3,6 +3,16 @@
 All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.2] - 2026-11-15
+
+### Added
+
+- `composer.json` (package `adamjenkins/moodle-vrroomruntime_companion`, type `moodle-vrroomruntime`, requiring `moodle/moodle` `>=5.2 <5.4` and `moodle/composer-installer` `^1.0`, plus `adamjenkins/moodle-mod_vrroom` `^0.1`) for installing from Packagist.
+
+### Changed
+
+- CI (`.github/workflows/ci.yml`) clones the public `mod_vrroom` repository without a token.
+
 ## [0.1.1] - 2026-10-11
 
 ### Added

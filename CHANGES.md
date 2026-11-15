@@ -1,20 +1,5 @@
 # Changes
 
-## 0.1.1 (2026-10-11) — ALPHA
+## 0.1.2 (2026-11-15) — ALPHA
 
-The first release published to camp. The plugin code is the same as 0.1.0.
-
-- Screenshots and captions for the camp listing.
-- Development files (tests, CI workflows, the camp listing) are left out of the release ZIP.
-
-## 0.1.0 (2026-10-11) — ALPHA
-
-- First version (Phase 4): the **Companion service** run mode for VR room. It uses the built-in
-  viewer, but live rooms go through the vrroom-companion stack: up to 50 people per room, positions
-  and states through the `vrroom-sync` service, voice through a LiveKit server. Participants no
-  longer see each other's IP addresses. Moodle signs short-lived room tokens with a shared secret
-  after the same checks as the built-in live mode, renews them every four minutes, and names
-  people and rooms by pseudonyms only. Site settings for the companion and LiveKit addresses and
-  secrets, and an admin page that tests the connection from the server (including proof that the
-  service knows the shared secret) and from the browser. Nothing is stored in Moodle.
-- Supports Moodle 5.3 as well as 5.2; GitHub Actions CI on Moodle 5.3.
+- The run mode is now listed on Packagist as `adamjenkins/moodle-vrroomruntime_companion`. Composer cannot install it yet: Moodle's Composer installer does not know the `vrroomruntime` sub-plugin type, so install it by hand in `mod/vrroom/runtime/companion` (under `public/` on Moodle 5.1 and later) as before. No change to the plugin itself.
