@@ -1,0 +1,11 @@
+{
+    "name": "adamjenkins/moodle-vrroomruntime_companion",
+    "description": "A VR room run mode that sends live rooms through a self-hosted companion service, for up to 50 people with voice",
+    "type": "moodle-vrroomruntime",
+    "require": {
+        "moodle/moodle": ">=5.2 <5.4",
+        "moodle/composer-installer": "^1.0",
+        "adamjenkins/moodle-mod_vrroom": "^0.1"
+    },
+    "license": "GPL-3.0-or-later"
+}
